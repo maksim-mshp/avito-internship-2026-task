@@ -1,0 +1,11 @@
+section.auth {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+section.auth > form {
+    margin-bottom: 100px;
+    width: 500px;
+}

@@ -1,3 +1,21 @@
 main {
     padding: 30px;
 }
+
+.p-button:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.p-focus * {
+    box-shadow: none;
+    outline: none;
+}
+
+.p-toast-detail {
+    margin-top: 0;
+}
+
+.p-toast-message-content {
+    align-items: center;
+}
