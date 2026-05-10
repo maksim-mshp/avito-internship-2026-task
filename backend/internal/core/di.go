@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"time"
 
+	assistantsApp "ai-assistants-catalog/internal/assistants/app/handlers"
+	assistantsV1HTTP "ai-assistants-catalog/internal/assistants/infra/http/v1"
+	assistantsPostgres "ai-assistants-catalog/internal/assistants/infra/postgres"
 	authApp "ai-assistants-catalog/internal/auth/app/handlers"
 	authV1HTTP "ai-assistants-catalog/internal/auth/infra/http/v1"
 	categoriesApp "ai-assistants-catalog/internal/categories/app/handlers"
@@ -55,6 +58,11 @@ func Start(cfg *config.Config) (*App, error) {
 	categoriesHandlers := categoriesApp.BuildHandlers(categoriesRepo)
 	categoriesHTTPHandler := categoriesV1HTTP.NewHTTPHandler(categoriesHandlers)
 	categoriesV1HTTP.RegisterRoutes(mux, categoriesHTTPHandler, authMW, adminMW)
+
+	assistantsRepo := assistantsPostgres.NewRepository(db)
+	assistantsHandlers := assistantsApp.BuildHandlers(assistantsRepo)
+	assistantsHTTPHandler := assistantsV1HTTP.NewHTTPHandler(assistantsHandlers)
+	assistantsV1HTTP.RegisterRoutes(mux, assistantsHTTPHandler, authMW, adminMW)
 
 	handler := middleware.RecoverMiddleware(mux)
 	handler = middleware.LoggingMiddleware(handler)

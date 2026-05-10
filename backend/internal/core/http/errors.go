@@ -20,6 +20,12 @@ var ErrForbidden = APIError{
 	Message:    "forbidden",
 }
 
+var ErrNotFound = APIError{
+	StatusCode: http.StatusNotFound,
+	Code:       "NOT_FOUND",
+	Message:    "not found",
+}
+
 var ErrInternal = APIError{
 	StatusCode: http.StatusInternalServerError,
 	Code:       "INTERNAL_ERROR",
