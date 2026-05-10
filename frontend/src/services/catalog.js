@@ -12,6 +12,10 @@ export const getAssistants = (params) => {
     return api.get('/assistants', {params})
 }
 
+export const createAssistant = (data) => {
+    return api.post('/assistants', data)
+}
+
 export const getAssistant = (assistantId) => {
     return api.get(`/assistants/${assistantId}`)
 }
