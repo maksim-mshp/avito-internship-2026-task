@@ -25,6 +25,13 @@ export const Header = () => {
                     className={location.pathname.startsWith('/assistants') ? 'active' : ''}
                     onClick={() => navigate('/assistants')}
                 />
+                <Button
+                    label="Мои запуски"
+                    severity="secondary"
+                    text
+                    className={location.pathname === '/runs/my' ? 'active' : ''}
+                    onClick={() => navigate('/runs/my')}
+                />
             </div>
             <div className="flex align-items-center gap-2">
                 {user?.role && <Tag value={user.role}/>}

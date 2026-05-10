@@ -2,6 +2,7 @@ import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import {Login} from '../pages/auth/Login.jsx'
 import {AssistantDetail} from '../pages/assistants/AssistantDetail.jsx'
 import {AssistantList} from '../pages/assistants/AssistantList.jsx'
+import {MyRuns} from '../pages/runs/MyRuns.jsx'
 import {PrivateRoute} from './PrivateRoute.jsx'
 
 export const Router = () => {
@@ -11,6 +12,7 @@ export const Router = () => {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/assistants" element={<PrivateRoute><AssistantList/></PrivateRoute>}/>
                 <Route path="/assistants/:assistantId" element={<PrivateRoute><AssistantDetail/></PrivateRoute>}/>
+                <Route path="/runs/my" element={<PrivateRoute><MyRuns/></PrivateRoute>}/>
                 <Route path="*" element={<Navigate to="/assistants" replace/>}/>
             </Routes>
         </BrowserRouter>
