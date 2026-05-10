@@ -1,5 +1,5 @@
 import {useContext, useEffect, useMemo, useReducer, useState} from 'react'
-import {useSearchParams} from 'react-router-dom'
+import {useNavigate, useSearchParams} from 'react-router-dom'
 import {Button} from 'primereact/button'
 import {Card} from 'primereact/card'
 import {Checkbox} from 'primereact/checkbox'
@@ -44,6 +44,7 @@ const reducer = (state, action) => {
 
 export const AssistantList = () => {
     const {user} = useContext(AuthContext)
+    const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const [{assistants, pagination, loading, error}, dispatch] = useReducer(reducer, initialState)
     const [categories, setCategories] = useState([])
@@ -156,6 +157,12 @@ export const AssistantList = () => {
                             {assistant.exampleUserPrompt &&
                                 <small>Пример контекста: {assistant.exampleUserPrompt}</small>
                             }
+                            <Button
+                                outlined
+                                icon="pi pi-arrow-right"
+                                label="Открыть"
+                                onClick={() => navigate(`/assistants/${assistant.id}`)}
+                            />
                         </Card>
                     ))}
                 </div>

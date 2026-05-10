@@ -7,3 +7,11 @@ export const getCategories = () => {
 export const getAssistants = (params) => {
     return api.get('/assistants', {params})
 }
+
+export const getAssistant = (assistantId) => {
+    return api.get(`/assistants/${assistantId}`)
+}
+
+export const runAssistant = (assistantId, userPrompt) => {
+    return api.post(`/assistants/${assistantId}/run`, {userPrompt})
+}

@@ -1,5 +1,6 @@
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import {Login} from '../pages/auth/Login.jsx'
+import {AssistantDetail} from '../pages/assistants/AssistantDetail.jsx'
 import {AssistantList} from '../pages/assistants/AssistantList.jsx'
 import {PrivateRoute} from './PrivateRoute.jsx'
 
@@ -9,6 +10,7 @@ export const Router = () => {
             <Routes>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/assistants" element={<PrivateRoute><AssistantList/></PrivateRoute>}/>
+                <Route path="/assistants/:assistantId" element={<PrivateRoute><AssistantDetail/></PrivateRoute>}/>
                 <Route path="*" element={<Navigate to="/assistants" replace/>}/>
             </Routes>
         </BrowserRouter>

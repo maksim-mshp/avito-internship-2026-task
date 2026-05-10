@@ -88,3 +88,54 @@
     justify-content: center;
     min-height: 180px;
 }
+
+.assistant-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 900px;
+}
+
+.assistant-detail-card {
+    border: 1px solid var(--surface-300);
+    box-shadow: none;
+}
+
+.assistant-detail-card .p-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.assistant-detail-card p {
+    line-height: 1.55;
+    margin: 0;
+}
+
+.assistant-example {
+    background: var(--surface-50);
+    border: 1px solid var(--surface-200);
+    border-radius: 6px;
+    padding: 14px;
+}
+
+.assistant-example span {
+    color: var(--surface-600);
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.assistant-run-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.assistant-run-form label {
+    font-weight: 500;
+}
+
+.assistant-output {
+    white-space: pre-wrap;
+}
