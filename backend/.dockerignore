@@ -1,0 +1,5 @@
+.golangci.yml
+*.test
+coverage
+dist
+tmp

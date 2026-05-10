@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE:-ai_assistants_catalog}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  backend:
+    restart: always
+    build:
+      context: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PORT=${PORT:-8080}
+      - JWT_TOKEN=${JWT_TOKEN:-secret}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE:-ai_assistants_catalog}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - BACKEND_URL=${BACKEND_URL:-/api/v1}
+    volumes:
+      - frontend_static:/static
+
+  nginx:
+    restart: always
+    image: nginx:1.29-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - frontend_static:/static:ro
+    depends_on:
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_completed_successfully
+    ports:
+      - ${NGINX_HTTP_PORT:-3000}:${NGINX_HTTP_PORT:-3000}
+    environment:
+      - NGINX_HTTP_PORT=${NGINX_HTTP_PORT:-3000}
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=${PORT:-8080}
+      - API_PREFIX=${API_PREFIX:-/api/v1}
+      - PUBLIC_URL=${PUBLIC_URL:-http://localhost:3000}
+
+volumes:
+  postgres_data:
+  frontend_static:
