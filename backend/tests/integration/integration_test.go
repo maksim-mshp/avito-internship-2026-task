@@ -10,7 +10,18 @@ import (
 )
 
 type tokenResponse struct {
-	Token string `json:"token"`
+	Token string  `json:"token"`
+	User  userDTO `json:"user"`
+}
+
+type userDTO struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+type registerResponse struct {
+	User userDTO `json:"user"`
 }
 
 type categoryDTO struct {
@@ -129,6 +140,45 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 	}
 	if _, ok = findRun(adminRunsBody.Runs, runBody.ID); !ok {
 		t.Fatalf("run %s was not found in admin history", runBody.ID)
+	}
+}
+
+func TestRegisterAndLogin(t *testing.T) {
+	s := newSuite(t)
+
+	email := fmt.Sprintf("integration-%s@example.com", uuid.NewString())
+	password := "password"
+
+	registerResp := s.requestJSON(t, http.MethodPost, "/register", map[string]any{
+		"email":    email,
+		"password": password,
+		"role":     "user",
+	}, "")
+	assertStatus(t, registerResp, http.StatusCreated)
+
+	registerBody := decodeJSON[registerResponse](t, registerResp.body)
+	if registerBody.User.ID == "" {
+		t.Fatal("register returned empty user id")
+	}
+	if registerBody.User.Email != email {
+		t.Fatalf("unexpected registered email: got=%q want=%q", registerBody.User.Email, email)
+	}
+	if registerBody.User.Role != "user" {
+		t.Fatalf("unexpected registered role: got=%q want=%q", registerBody.User.Role, "user")
+	}
+
+	loginResp := s.requestJSON(t, http.MethodPost, "/login", map[string]any{
+		"email":    email,
+		"password": password,
+	}, "")
+	assertStatus(t, loginResp, http.StatusOK)
+
+	loginBody := decodeJSON[tokenResponse](t, loginResp.body)
+	if loginBody.Token == "" {
+		t.Fatal("login returned empty token")
+	}
+	if loginBody.User.ID != registerBody.User.ID {
+		t.Fatalf("unexpected login user id: got=%q want=%q", loginBody.User.ID, registerBody.User.ID)
 	}
 }
 

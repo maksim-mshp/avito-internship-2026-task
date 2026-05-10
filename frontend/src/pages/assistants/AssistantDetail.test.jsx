@@ -1,7 +1,6 @@
-import {render, screen, waitFor} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {MemoryRouter, Route, Routes} from 'react-router-dom'
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {AuthContext} from '../../context/AuthContext.jsx'
 import {getAssistant, runAssistant} from '../../services/catalog.js'
 import {AssistantDetail} from './AssistantDetail.jsx'
@@ -10,6 +9,11 @@ vi.mock('../../services/catalog.js', () => ({
     getAssistant: vi.fn(),
     runAssistant: vi.fn(),
 }))
+
+beforeEach(() => {
+    getAssistant.mockReset()
+    runAssistant.mockReset()
+})
 
 const assistant = {
     id: 'assistant-id',
@@ -46,8 +50,6 @@ describe('AssistantDetail', () => {
     })
 
     it('запускает ассистента только с пользовательским контекстом', async () => {
-        const user = userEvent.setup()
-
         getAssistant.mockResolvedValueOnce({data: assistant})
         runAssistant.mockResolvedValueOnce({
             data: {
@@ -60,9 +62,8 @@ describe('AssistantDetail', () => {
         renderDetail()
 
         const textarea = await screen.findByLabelText('Пользовательский контекст')
-        await user.clear(textarea)
-        await user.type(textarea, 'новый контекст')
-        await user.click(screen.getByRole('button', {name: 'Запустить'}))
+        fireEvent.change(textarea, {target: {value: 'новый контекст'}})
+        fireEvent.click(screen.getByRole('button', {name: 'Запустить'}))
 
         await waitFor(() => {
             expect(runAssistant).toHaveBeenCalledWith('assistant-id', 'новый контекст')

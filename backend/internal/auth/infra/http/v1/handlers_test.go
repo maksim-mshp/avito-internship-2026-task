@@ -16,9 +16,71 @@ import (
 
 type fakeRepository struct{}
 
+const testPasswordHash = "$2a$10$hfcLxclybGOmg8CIJeuZi.3qIHtMKLdw2bHne4ZRDbARnai0Sgh96"
+
 func (r fakeRepository) GetByRole(_ context.Context, role domain.Role) (domain.User, error) {
 	createdAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
 	return domain.ReconstituteUser(role.UserID(), role.Email(), role, &createdAt), nil
+}
+
+func (r fakeRepository) CreateUser(_ context.Context, user domain.User, _ string) (domain.User, error) {
+	createdAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
+	return domain.ReconstituteUser("0fa9ed62-6138-4794-b567-3813a8d1a4fb", user.Email, user.Role, &createdAt), nil
+}
+
+func (r fakeRepository) GetAuthUserByEmail(_ context.Context, email string) (domain.AuthUser, error) {
+	createdAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
+	return domain.AuthUser{
+		User:         domain.ReconstituteUser("0fa9ed62-6138-4794-b567-3813a8d1a4fb", email, domain.RoleUser, &createdAt),
+		PasswordHash: testPasswordHash,
+	}, nil
+}
+
+func TestRegister(t *testing.T) {
+	handler := NewHTTPHandler(authHandlers.BuildHandlers("secret", fakeRepository{}))
+
+	req := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"email":"user@example.com","password":"password","role":"user"}`))
+	req.Header.Set("Content-Type", "application/json")
+	recorder := httptest.NewRecorder()
+
+	handler.Register(recorder, req)
+
+	if recorder.Code != http.StatusCreated {
+		t.Fatalf("expected status 201, got %d", recorder.Code)
+	}
+
+	var response RegisterResponse
+	if err := json.NewDecoder(recorder.Body).Decode(&response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+	if response.User.Email != "user@example.com" {
+		t.Fatalf("unexpected email: %s", response.User.Email)
+	}
+}
+
+func TestLogin(t *testing.T) {
+	handler := NewHTTPHandler(authHandlers.BuildHandlers("secret", fakeRepository{}))
+
+	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(`{"email":"user@example.com","password":"password"}`))
+	req.Header.Set("Content-Type", "application/json")
+	recorder := httptest.NewRecorder()
+
+	handler.Login(recorder, req)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", recorder.Code)
+	}
+
+	var response TokenResponse
+	if err := json.NewDecoder(recorder.Body).Decode(&response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+	if response.Token == "" {
+		t.Fatalf("expected token")
+	}
+	if response.User.Email != "user@example.com" {
+		t.Fatalf("unexpected email: %s", response.User.Email)
+	}
 }
 
 func TestDummyLogin(t *testing.T) {

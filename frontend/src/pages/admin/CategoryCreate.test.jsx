@@ -1,7 +1,6 @@
-import {render, screen, waitFor} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {MemoryRouter, Route, Routes} from 'react-router-dom'
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {ToastContext} from '../../context/ToastContext.jsx'
 import {createCategory} from '../../services/catalog.js'
 import {CategoryCreate} from './CategoryCreate.jsx'
@@ -9,6 +8,10 @@ import {CategoryCreate} from './CategoryCreate.jsx'
 vi.mock('../../services/catalog.js', () => ({
     createCategory: vi.fn(),
 }))
+
+beforeEach(() => {
+    createCategory.mockReset()
+})
 
 const renderCategoryCreate = ({showSuccess = vi.fn()} = {}) => {
     render(
@@ -27,25 +30,22 @@ const renderCategoryCreate = ({showSuccess = vi.fn()} = {}) => {
 
 describe('CategoryCreate', () => {
     it('не отправляет пустое название категории', async () => {
-        const user = userEvent.setup()
-
         renderCategoryCreate()
 
-        await user.click(screen.getByRole('button', {name: 'Создать'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Создать'}))
 
         expect(screen.getByText('Введите название категории')).toBeInTheDocument()
         expect(createCategory).not.toHaveBeenCalled()
     })
 
     it('создает категорию и возвращает к каталогу', async () => {
-        const user = userEvent.setup()
         const {showSuccess} = renderCategoryCreate()
 
         createCategory.mockResolvedValueOnce({data: {id: 'category-id'}})
 
-        await user.type(screen.getByLabelText('Название'), 'Новая категория')
-        await user.type(screen.getByLabelText('Описание'), 'Описание категории')
-        await user.click(screen.getByRole('button', {name: 'Создать'}))
+        fireEvent.change(screen.getByLabelText('Название'), {target: {value: 'Новая категория'}})
+        fireEvent.change(screen.getByLabelText('Описание'), {target: {value: 'Описание категории'}})
+        fireEvent.click(screen.getByRole('button', {name: 'Создать'}))
 
         await waitFor(() => {
             expect(createCategory).toHaveBeenCalledWith({

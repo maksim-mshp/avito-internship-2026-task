@@ -3,6 +3,8 @@ const TRANSLATED_ERRORS = {
     UNAUTHORIZED: 'Необходим вход',
     FORBIDDEN: 'Доступ запрещён',
     NOT_FOUND: 'Не найдено',
+    EMAIL_TAKEN: 'Email уже занят',
+    INVALID_CREDENTIALS: 'Неверный email или пароль',
     INTERNAL_ERROR: 'Внутренняя ошибка сервера',
     'Network Error': 'Сетевая ошибка',
 }

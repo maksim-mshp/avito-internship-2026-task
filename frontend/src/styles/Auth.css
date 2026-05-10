@@ -9,3 +9,31 @@ section.auth > form {
     margin-bottom: 100px;
     width: 500px;
 }
+
+.auth-mode {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 20px;
+}
+
+.auth-divider {
+    align-items: center;
+    color: var(--text-color-secondary);
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    background: var(--surface-border);
+    content: "";
+    flex: 1;
+    height: 1px;
+}
+
+section.auth .p-password,
+section.auth .p-password-input {
+    width: 100%;
+}

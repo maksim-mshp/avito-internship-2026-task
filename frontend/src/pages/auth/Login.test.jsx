@@ -1,7 +1,6 @@
-import {render, screen, waitFor} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {MemoryRouter, Route, Routes} from 'react-router-dom'
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {AuthContext} from '../../context/AuthContext.jsx'
 import {ToastContext} from '../../context/ToastContext.jsx'
 import {api} from '../../services/api.js'
@@ -12,6 +11,10 @@ vi.mock('../../services/api.js', () => ({
         post: vi.fn(),
     },
 }))
+
+beforeEach(() => {
+    api.post.mockReset()
+})
 
 const renderLogin = ({login = vi.fn(), showError = vi.fn()} = {}) => {
     render(
@@ -31,14 +34,13 @@ const renderLogin = ({login = vi.fn(), showError = vi.fn()} = {}) => {
 }
 
 describe('Login', () => {
-    it('отправляет выбранную роль и сохраняет данные входа', async () => {
-        const user = userEvent.setup()
+    it('отправляет выбранную тестовую роль и сохраняет данные входа', async () => {
         const {login} = renderLogin()
         const response = {token: 'token', user: {id: 'user-id', role: 'user'}}
 
         api.post.mockResolvedValueOnce({data: response})
 
-        await user.click(screen.getByRole('button', {name: 'Войти'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Войти тестовым пользователем'}))
 
         await waitFor(() => {
             expect(api.post).toHaveBeenCalledWith('/dummyLogin', {role: 'user'})
@@ -47,13 +49,58 @@ describe('Login', () => {
         expect(await screen.findByText('Каталог открыт')).toBeInTheDocument()
     })
 
+    it('входит по email и паролю', async () => {
+        const {login} = renderLogin()
+        const response = {token: 'token', user: {id: 'user-id', role: 'user'}}
+
+        api.post.mockResolvedValueOnce({data: response})
+
+        fireEvent.change(screen.getByLabelText('Email'), {target: {value: 'user@example.com'}})
+        fireEvent.change(screen.getByLabelText('Пароль'), {target: {value: 'password'}})
+        fireEvent.click(screen.getByRole('button', {name: 'Войти по email'}))
+
+        await waitFor(() => {
+            expect(api.post).toHaveBeenCalledWith('/login', {
+                email: 'user@example.com',
+                password: 'password',
+            })
+        })
+        expect(login).toHaveBeenCalledWith(response)
+    })
+
+    it('регистрирует пользователя и выполняет вход', async () => {
+        const {login} = renderLogin()
+        const response = {token: 'token', user: {id: 'user-id', role: 'user'}}
+
+        api.post
+            .mockResolvedValueOnce({data: {user: response.user}})
+            .mockResolvedValueOnce({data: response})
+
+        fireEvent.click(screen.getByRole('button', {name: 'Регистрация'}))
+        fireEvent.change(screen.getByLabelText('Email'), {target: {value: 'user@example.com'}})
+        fireEvent.change(screen.getByLabelText('Пароль'), {target: {value: 'password'}})
+        fireEvent.click(screen.getByRole('button', {name: 'Зарегистрироваться'}))
+
+        await waitFor(() => {
+            expect(api.post).toHaveBeenNthCalledWith(1, '/register', {
+                email: 'user@example.com',
+                password: 'password',
+                role: 'user',
+            })
+        })
+        expect(api.post).toHaveBeenNthCalledWith(2, '/login', {
+            email: 'user@example.com',
+            password: 'password',
+        })
+        expect(login).toHaveBeenCalledWith(response)
+    })
+
     it('показывает ошибку при неуспешном входе', async () => {
-        const user = userEvent.setup()
         const {showError} = renderLogin()
 
         api.post.mockRejectedValueOnce({response: {data: {message: 'ошибка'}}})
 
-        await user.click(screen.getByRole('button', {name: 'Войти'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Войти по email'}))
 
         await waitFor(() => {
             expect(showError).toHaveBeenCalled()
