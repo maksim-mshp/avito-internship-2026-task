@@ -8,6 +8,18 @@ var ErrInvalidRequest = APIError{
 	Message:    "invalid request",
 }
 
+var ErrUnauthorized = APIError{
+	StatusCode: http.StatusUnauthorized,
+	Code:       "UNAUTHORIZED",
+	Message:    "unauthorized",
+}
+
+var ErrForbidden = APIError{
+	StatusCode: http.StatusForbidden,
+	Code:       "FORBIDDEN",
+	Message:    "forbidden",
+}
+
 var ErrInternal = APIError{
 	StatusCode: http.StatusInternalServerError,
 	Code:       "INTERNAL_ERROR",
