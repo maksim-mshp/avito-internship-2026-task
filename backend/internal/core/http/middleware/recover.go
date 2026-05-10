@@ -12,9 +12,7 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Printf("panic recovered: %v", err)
-				corehttp.Respond(w, http.StatusInternalServerError, corehttp.ErrorResponse{
-					Error: "INTERNAL_ERROR",
-				})
+				corehttp.RespondError(w, corehttp.ErrInternal)
 			}
 		}()
 

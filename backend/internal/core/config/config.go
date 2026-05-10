@@ -7,7 +7,8 @@ import (
 )
 
 type Config struct {
-	Port int
+	Port     int
+	JWTToken string
 }
 
 func Load() (*Config, error) {
@@ -17,8 +18,18 @@ func Load() (*Config, error) {
 	}
 
 	return &Config{
-		Port: port,
+		Port:     port,
+		JWTToken: envString("JWT_TOKEN", "secret"),
 	}, nil
+}
+
+func envString(name string, defaultValue string) string {
+	value := os.Getenv(name)
+	if value == "" {
+		return defaultValue
+	}
+
+	return value
 }
 
 func envInt(name string, defaultValue int) (int, error) {
