@@ -4,14 +4,22 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"ai-assistants-catalog/internal/auth/app"
 	"ai-assistants-catalog/internal/auth/domain"
 	"ai-assistants-catalog/internal/core/security"
 )
 
+type fakeRepository struct{}
+
+func (r fakeRepository) GetByRole(_ context.Context, role domain.Role) (domain.User, error) {
+	createdAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
+	return domain.ReconstituteUser(role.UserID(), role.Email(), role, &createdAt), nil
+}
+
 func TestDummyLoginHandlerHandle(t *testing.T) {
-	handler := NewDummyLoginHandler("secret")
+	handler := NewDummyLoginHandler("secret", fakeRepository{})
 
 	result, err := handler.Handle(context.Background(), app.DummyLoginCommand{Role: "admin"})
 	if err != nil {

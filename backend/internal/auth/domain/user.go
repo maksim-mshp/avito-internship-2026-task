@@ -16,3 +16,12 @@ func NewDummyUser(role Role) User {
 		Role:  role,
 	}
 }
+
+func ReconstituteUser(id string, email string, role Role, createdAt *time.Time) User {
+	return User{
+		ID:        id,
+		Email:     email,
+		Role:      role,
+		CreatedAt: createdAt,
+	}
+}

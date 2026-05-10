@@ -10,6 +10,7 @@ import (
 	assistantsPostgres "ai-assistants-catalog/internal/assistants/infra/postgres"
 	authApp "ai-assistants-catalog/internal/auth/app/handlers"
 	authV1HTTP "ai-assistants-catalog/internal/auth/infra/http/v1"
+	authPostgres "ai-assistants-catalog/internal/auth/infra/postgres"
 	categoriesApp "ai-assistants-catalog/internal/categories/app/handlers"
 	categoriesV1HTTP "ai-assistants-catalog/internal/categories/infra/http/v1"
 	categoriesPostgres "ai-assistants-catalog/internal/categories/infra/postgres"
@@ -54,7 +55,8 @@ func Start(cfg *config.Config) (*App, error) {
 	authMW := middleware.RequireAuthMiddleware(cfg.JWTToken)
 	adminMW := middleware.RequireAdminMiddleware()
 
-	authHandlers := authApp.BuildHandlers(cfg.JWTToken)
+	authRepo := authPostgres.NewRepository(db)
+	authHandlers := authApp.BuildHandlers(cfg.JWTToken, authRepo)
 	authHTTPHandler := authV1HTTP.NewHTTPHandler(authHandlers)
 	authV1HTTP.RegisterRoutes(mux, authHTTPHandler)
 

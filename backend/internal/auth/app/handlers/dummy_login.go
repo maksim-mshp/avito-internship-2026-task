@@ -15,10 +15,14 @@ type DummyLoginResult struct {
 
 type DummyLoginHandler struct {
 	jwtToken string
+	repo     app.Repository
 }
 
-func NewDummyLoginHandler(jwtToken string) *DummyLoginHandler {
-	return &DummyLoginHandler{jwtToken: jwtToken}
+func NewDummyLoginHandler(jwtToken string, repo app.Repository) *DummyLoginHandler {
+	return &DummyLoginHandler{
+		jwtToken: jwtToken,
+		repo:     repo,
+	}
 }
 
 func (h *DummyLoginHandler) Handle(ctx context.Context, cmd app.DummyLoginCommand) (DummyLoginResult, error) {
@@ -27,7 +31,11 @@ func (h *DummyLoginHandler) Handle(ctx context.Context, cmd app.DummyLoginComman
 		return DummyLoginResult{}, err
 	}
 
-	user := domain.NewDummyUser(role)
+	user, err := h.repo.GetByRole(ctx, role)
+	if err != nil {
+		return DummyLoginResult{}, err
+	}
+
 	token, err := security.GenerateJWT(h.jwtToken, user.ID, user.Role.String())
 	if err != nil {
 		return DummyLoginResult{}, err
