@@ -4,6 +4,10 @@ export const getCategories = () => {
     return api.get('/categories')
 }
 
+export const createCategory = (data) => {
+    return api.post('/categories', data)
+}
+
 export const getAssistants = (params) => {
     return api.get('/assistants', {params})
 }

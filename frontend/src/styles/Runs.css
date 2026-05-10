@@ -52,13 +52,32 @@
     margin: 0 0 6px;
 }
 
-.run-card-header span,
-.run-card-body span,
-.run-dialog-content span {
+.run-card-header > div > span,
+.run-card-body > div > span,
+.run-dialog-content > div > span {
     color: var(--surface-600);
     display: block;
     font-size: 0.9rem;
     margin-bottom: 6px;
+}
+
+.run-status-tag {
+    align-items: center;
+    align-self: flex-start;
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 6px;
+    width: fit-content;
+}
+
+.run-status-tag,
+.run-status-tag .p-tag-icon,
+.run-status-tag .p-tag-value {
+    color: #fff;
+}
+
+.run-status-tag .p-tag-icon {
+    margin-right: 0;
 }
 
 .run-card-body {

@@ -23,15 +23,15 @@ const initialState = {
 
 const statusOptions = [
     {label: 'Все статусы', value: null},
-    {label: 'pending', value: 'pending'},
-    {label: 'success', value: 'success'},
-    {label: 'failed', value: 'failed'},
+    {label: 'В ожидании', value: 'pending'},
+    {label: 'Успешно', value: 'success'},
+    {label: 'Ошибка', value: 'failed'},
 ]
 
-const statusSeverity = {
-    pending: 'warning',
-    success: 'success',
-    failed: 'danger',
+const statusView = {
+    pending: {icon: 'pi pi-clock', severity: 'warning', value: 'В ожидании'},
+    success: {icon: 'pi pi-check', severity: 'success', value: 'Успешно'},
+    failed: {icon: 'pi pi-times', severity: 'danger', value: 'Ошибка'},
 }
 
 const reducer = (state, action) => {
@@ -66,6 +66,12 @@ const shorten = (value, length = 140) => {
     }
 
     return value.length > length ? `${value.slice(0, length)}...` : value
+}
+
+const StatusTag = ({status}) => {
+    const view = statusView[status] || {icon: 'pi pi-info-circle', severity: 'secondary', value: status}
+
+    return <Tag className="run-status-tag" icon={view.icon} severity={view.severity} value={view.value}/>
 }
 
 export const MyRuns = () => {
@@ -148,7 +154,7 @@ export const MyRuns = () => {
                                     <h2>{run.assistantName || 'Ассистент'}</h2>
                                     <span>{formatDate(run.createdAt)}</span>
                                 </div>
-                                <Tag value={run.status} severity={statusSeverity[run.status] || 'secondary'}/>
+                                <StatusTag status={run.status}/>
                             </div>
                             <div className="run-card-body">
                                 <div>
@@ -207,7 +213,7 @@ export const MyRuns = () => {
             >
                 {selectedRun &&
                     <div className="run-dialog-content">
-                        <Tag value={selectedRun.status} severity={statusSeverity[selectedRun.status] || 'secondary'}/>
+                        <StatusTag status={selectedRun.status}/>
                         <div>
                             <span>Пользовательский контекст</span>
                             <p>{selectedRun.userPrompt}</p>
