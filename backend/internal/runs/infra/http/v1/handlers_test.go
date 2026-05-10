@@ -1,8 +1,11 @@
 package v1
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"ai-assistants-catalog/internal/runs/domain"
 )
 
 func TestParseListQuery(t *testing.T) {
@@ -40,5 +43,27 @@ func TestParseListQueryInvalidPage(t *testing.T) {
 	_, apiErr := parseListQuery(req)
 	if apiErr == nil {
 		t.Fatalf("expected error")
+	}
+}
+
+func TestMapErrorAssistantInactive(t *testing.T) {
+	apiErr := mapError(domain.ErrAssistantInactive)
+
+	if apiErr.StatusCode != http.StatusConflict {
+		t.Fatalf("unexpected status: got=%d want=%d", apiErr.StatusCode, http.StatusConflict)
+	}
+	if apiErr.Code != "ASSISTANT_INACTIVE" {
+		t.Fatalf("unexpected code: got=%q want=%q", apiErr.Code, "ASSISTANT_INACTIVE")
+	}
+}
+
+func TestMapErrorProviderFailed(t *testing.T) {
+	apiErr := mapError(domain.ErrProviderFailed)
+
+	if apiErr.StatusCode != http.StatusBadGateway {
+		t.Fatalf("unexpected status: got=%d want=%d", apiErr.StatusCode, http.StatusBadGateway)
+	}
+	if apiErr.Code != "LLM_PROVIDER_ERROR" {
+		t.Fatalf("unexpected code: got=%q want=%q", apiErr.Code, "LLM_PROVIDER_ERROR")
 	}
 }

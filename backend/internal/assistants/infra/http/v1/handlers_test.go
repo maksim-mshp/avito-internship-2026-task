@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"ai-assistants-catalog/internal/assistants/domain"
 	"ai-assistants-catalog/internal/core/security"
 )
 
@@ -48,5 +50,16 @@ func TestParseListQueryInvalidBool(t *testing.T) {
 	_, apiErr := parseListQuery(req)
 	if apiErr == nil {
 		t.Fatalf("expected error")
+	}
+}
+
+func TestMapErrorAssistantNotFound(t *testing.T) {
+	apiErr := mapError(domain.ErrNotFound)
+
+	if apiErr.StatusCode != http.StatusNotFound {
+		t.Fatalf("unexpected status: got=%d want=%d", apiErr.StatusCode, http.StatusNotFound)
+	}
+	if apiErr.Code != "ASSISTANT_NOT_FOUND" {
+		t.Fatalf("unexpected code: got=%q want=%q", apiErr.Code, "ASSISTANT_NOT_FOUND")
 	}
 }

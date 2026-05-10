@@ -10,7 +10,11 @@ import (
 
 func mapError(err error) corehttp.APIError {
 	if errors.Is(err, domain.ErrNotFound) {
-		return corehttp.ErrNotFound
+		return corehttp.APIError{
+			StatusCode: http.StatusNotFound,
+			Code:       "ASSISTANT_NOT_FOUND",
+			Message:    "assistant not found",
+		}
 	}
 
 	if errors.Is(err, domain.ErrCategoryNotFound) {
