@@ -17,6 +17,10 @@ import (
 	corehttp "ai-assistants-catalog/internal/core/http"
 	"ai-assistants-catalog/internal/core/http/middleware"
 	"ai-assistants-catalog/internal/core/postgres"
+	runsApp "ai-assistants-catalog/internal/runs/app/handlers"
+	runsV1HTTP "ai-assistants-catalog/internal/runs/infra/http/v1"
+	runsMockLLM "ai-assistants-catalog/internal/runs/infra/llm/mock"
+	runsPostgres "ai-assistants-catalog/internal/runs/infra/postgres"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -63,6 +67,12 @@ func Start(cfg *config.Config) (*App, error) {
 	assistantsHandlers := assistantsApp.BuildHandlers(assistantsRepo)
 	assistantsHTTPHandler := assistantsV1HTTP.NewHTTPHandler(assistantsHandlers)
 	assistantsV1HTTP.RegisterRoutes(mux, assistantsHTTPHandler, authMW, adminMW)
+
+	runsRepo := runsPostgres.NewRepository(db)
+	llmProvider := runsMockLLM.NewProvider()
+	runsHandlers := runsApp.BuildHandlers(runsRepo, assistantsRepo, llmProvider)
+	runsHTTPHandler := runsV1HTTP.NewHTTPHandler(runsHandlers)
+	runsV1HTTP.RegisterRoutes(mux, runsHTTPHandler, authMW, adminMW)
 
 	handler := middleware.RecoverMiddleware(mux)
 	handler = middleware.LoggingMiddleware(handler)

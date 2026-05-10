@@ -26,6 +26,18 @@ var ErrNotFound = APIError{
 	Message:    "not found",
 }
 
+var ErrConflict = APIError{
+	StatusCode: http.StatusConflict,
+	Code:       "CONFLICT",
+	Message:    "conflict",
+}
+
+var ErrBadGateway = APIError{
+	StatusCode: http.StatusBadGateway,
+	Code:       "BAD_GATEWAY",
+	Message:    "bad gateway",
+}
+
 var ErrInternal = APIError{
 	StatusCode: http.StatusInternalServerError,
 	Code:       "INTERNAL_ERROR",
