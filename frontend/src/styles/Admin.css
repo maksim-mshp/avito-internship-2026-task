@@ -56,3 +56,11 @@
     flex-wrap: wrap;
     gap: 10px;
 }
+
+.admin-state {
+    align-items: center;
+    color: var(--surface-600);
+    display: flex;
+    justify-content: center;
+    min-height: 180px;
+}

@@ -22,6 +22,17 @@
     margin: 0;
 }
 
+.runs-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.runs-filters .p-dropdown {
+    min-width: 220px;
+}
+
 .runs-list {
     display: flex;
     flex-direction: column;
@@ -84,6 +95,10 @@
     display: grid;
     gap: 14px;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.run-card-body-admin {
+    grid-template-columns: minmax(220px, 0.8fr) repeat(2, minmax(260px, 1fr));
 }
 
 .run-card-body p,

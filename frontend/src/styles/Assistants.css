@@ -96,6 +96,12 @@
     max-width: 900px;
 }
 
+.assistant-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .assistant-detail-card {
     border: 1px solid var(--surface-300);
     box-shadow: none;

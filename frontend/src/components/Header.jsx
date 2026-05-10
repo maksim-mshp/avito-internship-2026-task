@@ -35,6 +35,13 @@ export const Header = () => {
                 {user?.role === 'admin' &&
                     <>
                         <Button
+                            label="Все запуски"
+                            severity="secondary"
+                            text
+                            className={location.pathname === '/admin/runs' ? 'active' : ''}
+                            onClick={() => navigate('/admin/runs')}
+                        />
+                        <Button
                             label="Новый ассистент"
                             severity="secondary"
                             text

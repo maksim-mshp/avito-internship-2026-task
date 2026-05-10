@@ -1,4 +1,4 @@
-import {useEffect, useReducer, useState} from 'react'
+import {useContext, useEffect, useReducer, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {Button} from 'primereact/button'
 import {Card} from 'primereact/card'
@@ -6,6 +6,7 @@ import {InputTextarea} from 'primereact/inputtextarea'
 import {Message} from 'primereact/message'
 import {ProgressSpinner} from 'primereact/progressspinner'
 import {Tag} from 'primereact/tag'
+import {AuthContext} from '../../context/AuthContext.jsx'
 import {getAssistant, runAssistant} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
 import '../../styles/Assistants.css'
@@ -32,6 +33,7 @@ const reducer = (state, action) => {
 export const AssistantDetail = () => {
     const {assistantId} = useParams()
     const navigate = useNavigate()
+    const {user} = useContext(AuthContext)
     const [{assistant, loading, error}, dispatch] = useReducer(reducer, initialState)
     const [userPrompt, setUserPrompt] = useState('')
     const [run, setRun] = useState(null)
@@ -102,7 +104,17 @@ export const AssistantDetail = () => {
 
     return (
         <section className="assistant-detail">
-            <Button outlined icon="pi pi-arrow-left" label="К каталогу" onClick={() => navigate('/assistants')}/>
+            <div className="assistant-detail-actions">
+                <Button outlined icon="pi pi-arrow-left" label="К каталогу" onClick={() => navigate('/assistants')}/>
+                {user?.role === 'admin' &&
+                    <Button
+                        outlined
+                        icon="pi pi-pencil"
+                        label="Редактировать"
+                        onClick={() => navigate(`/admin/assistants/${assistant.id}/edit`)}
+                    />
+                }
+            </div>
 
             <Card title={assistant.name} className="assistant-detail-card">
                 <div className="assistant-card-meta">

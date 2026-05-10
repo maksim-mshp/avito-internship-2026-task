@@ -16,6 +16,10 @@ export const createAssistant = (data) => {
     return api.post('/assistants', data)
 }
 
+export const updateAssistant = (assistantId, data) => {
+    return api.put(`/assistants/${assistantId}`, data)
+}
+
 export const getAssistant = (assistantId) => {
     return api.get(`/assistants/${assistantId}`)
 }
