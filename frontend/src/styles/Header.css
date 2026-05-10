@@ -1,0 +1,17 @@
+.app-header {
+    border-bottom: 1px solid var(--surface-300);
+}
+
+.menu > .p-button {
+    color: var(--surface-900);
+}
+
+.menu > .p-button > span {
+    font-weight: 500;
+}
+
+.active {
+    background: rgba(100, 116, 139, 0.1);
+    border-color: transparent;
+    color: var(--primary-500) !important;
+}

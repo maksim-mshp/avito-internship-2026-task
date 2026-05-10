@@ -33,7 +33,7 @@ export const Login = () => {
 
         api.post('/dummyLogin', {role}).then(({data}) => {
             login(data)
-            navigate('/', {replace: true})
+            navigate('/assistants', {replace: true})
         }).catch((error) => {
             showError(getTranslatedError(error))
         }).finally(() => {
@@ -49,6 +49,7 @@ export const Login = () => {
                     <label htmlFor="role">Роль</label>
                     <Dropdown
                         inputId="role"
+                        name="role"
                         value={role}
                         options={roleOptions}
                         onChange={(e) => setRole(e.value)}
