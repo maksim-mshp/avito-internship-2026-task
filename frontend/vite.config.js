@@ -10,5 +10,9 @@ export default defineConfig(() => {
         define: {
             'import.meta.env.BACKEND_URL': JSON.stringify(backendURL),
         },
+        test: {
+            environment: 'jsdom',
+            setupFiles: './src/test/setup.js',
+        },
     }
 })
