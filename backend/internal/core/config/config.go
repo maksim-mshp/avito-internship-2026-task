@@ -2,50 +2,29 @@ package config
 
 import (
 	"fmt"
-	"os"
-	"strconv"
+
+	"go-simpler.org/env"
 )
 
 type Config struct {
-	Port     int
-	JWTToken string
+	Port     int `env:"PORT" default:"8080"`
+	Database Database
+	JWTToken string `env:"JWT_TOKEN" default:"secret"`
+}
+
+type Database struct {
+	Host     string `env:"POSTGRES_HOST" default:"localhost"`
+	Port     int    `env:"POSTGRES_PORT" default:"5432"`
+	User     string `env:"POSTGRES_USER" default:"postgres"`
+	Password string `env:"POSTGRES_PASSWORD" default:"postgres"`
+	Database string `env:"POSTGRES_DATABASE" default:"ai_assistants_catalog"`
 }
 
 func Load() (*Config, error) {
-	port, err := envInt("PORT", 8080)
-	if err != nil {
-		return nil, err
+	cfg := Config{}
+	if err := env.Load(&cfg, nil); err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return &Config{
-		Port:     port,
-		JWTToken: envString("JWT_TOKEN", "secret"),
-	}, nil
-}
-
-func envString(name string, defaultValue string) string {
-	value := os.Getenv(name)
-	if value == "" {
-		return defaultValue
-	}
-
-	return value
-}
-
-func envInt(name string, defaultValue int) (int, error) {
-	value := os.Getenv(name)
-	if value == "" {
-		return defaultValue, nil
-	}
-
-	parsed, err := strconv.Atoi(value)
-	if err != nil {
-		return 0, fmt.Errorf("%s must be integer: %w", name, err)
-	}
-
-	if parsed <= 0 {
-		return 0, fmt.Errorf("%s must be positive", name)
-	}
-
-	return parsed, nil
+	return &cfg, nil
 }

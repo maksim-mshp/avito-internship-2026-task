@@ -7,24 +7,54 @@ import (
 
 	authApp "ai-assistants-catalog/internal/auth/app/handlers"
 	authV1HTTP "ai-assistants-catalog/internal/auth/infra/http/v1"
+	categoriesApp "ai-assistants-catalog/internal/categories/app/handlers"
+	categoriesV1HTTP "ai-assistants-catalog/internal/categories/infra/http/v1"
+	categoriesPostgres "ai-assistants-catalog/internal/categories/infra/postgres"
 	"ai-assistants-catalog/internal/core/config"
 	corehttp "ai-assistants-catalog/internal/core/http"
 	"ai-assistants-catalog/internal/core/http/middleware"
+	"ai-assistants-catalog/internal/core/postgres"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type App struct {
-	Config *config.Config
-	Server *http.Server
+	Config   *config.Config
+	Database *pgxpool.Pool
+	Server   *http.Server
 }
 
 func Start(cfg *config.Config) (*App, error) {
+	db, err := postgres.NewPostgres(cfg.Database)
+	if err != nil {
+		return nil, err
+	}
+
+	needCloseDB := true
+	defer func() {
+		if needCloseDB {
+			db.Close()
+		}
+	}()
+
+	if err = postgres.RunMigrations(cfg.Database); err != nil {
+		return nil, err
+	}
+
 	mux := http.NewServeMux()
 
 	corehttp.RegisterRoutes(mux)
+	authMW := middleware.RequireAuthMiddleware(cfg.JWTToken)
+	adminMW := middleware.RequireAdminMiddleware()
 
 	authHandlers := authApp.BuildHandlers(cfg.JWTToken)
 	authHTTPHandler := authV1HTTP.NewHTTPHandler(authHandlers)
 	authV1HTTP.RegisterRoutes(mux, authHTTPHandler)
+
+	categoriesRepo := categoriesPostgres.NewRepository(db)
+	categoriesHandlers := categoriesApp.BuildHandlers(categoriesRepo)
+	categoriesHTTPHandler := categoriesV1HTTP.NewHTTPHandler(categoriesHandlers)
+	categoriesV1HTTP.RegisterRoutes(mux, categoriesHTTPHandler, authMW, adminMW)
 
 	handler := middleware.RecoverMiddleware(mux)
 	handler = middleware.LoggingMiddleware(handler)
@@ -34,9 +64,12 @@ func Start(cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
+	needCloseDB = false
+
 	return &App{
-		Config: cfg,
-		Server: server,
+		Config:   cfg,
+		Database: db,
+		Server:   server,
 	}, nil
 }
 
@@ -44,5 +77,8 @@ func (a *App) Stop(ctx context.Context) error {
 	shutdownCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	return a.Server.Shutdown(shutdownCtx)
+	err := a.Server.Shutdown(shutdownCtx)
+	a.Database.Close()
+
+	return err
 }
