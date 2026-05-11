@@ -123,6 +123,14 @@ export const AssistantDetail = () => {
                     {!assistant.isActive && <Tag value="выключен" severity="danger"/>}
                 </div>
 
+                {assistant.tags?.length > 0 &&
+                    <div className="assistant-tags">
+                        {assistant.tags.map(tag => (
+                            <Tag key={tag} value={`#${tag}`} severity="info"/>
+                        ))}
+                    </div>
+                }
+
                 <p>{assistant.description}</p>
 
                 {assistant.exampleUserPrompt &&

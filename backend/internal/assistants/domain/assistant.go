@@ -16,6 +16,7 @@ type Assistant struct {
 	Model             string
 	SystemPrompt      string
 	ExampleUserPrompt *string
+	Tags              []string
 	IsActive          bool
 	CreatedAt         *time.Time
 	UpdatedAt         *time.Time
@@ -28,6 +29,7 @@ func NewAssistant(
 	model string,
 	systemPrompt string,
 	exampleUserPrompt *string,
+	tags []string,
 	isActive *bool,
 ) (Assistant, error) {
 	if !IsValidID(categoryID) {
@@ -66,6 +68,7 @@ func NewAssistant(
 		Model:             normalizedModel,
 		SystemPrompt:      normalizedSystemPrompt,
 		ExampleUserPrompt: normalizeNullableString(exampleUserPrompt),
+		Tags:              normalizeTags(tags),
 		IsActive:          active,
 	}, nil
 }
@@ -79,6 +82,7 @@ func ReconstituteAssistant(
 	model string,
 	systemPrompt string,
 	exampleUserPrompt *string,
+	tags []string,
 	isActive bool,
 	createdAt *time.Time,
 	updatedAt *time.Time,
@@ -92,6 +96,7 @@ func ReconstituteAssistant(
 		Model:             model,
 		SystemPrompt:      systemPrompt,
 		ExampleUserPrompt: exampleUserPrompt,
+		Tags:              normalizeTags(tags),
 		IsActive:          isActive,
 		CreatedAt:         createdAt,
 		UpdatedAt:         updatedAt,
@@ -114,4 +119,26 @@ func normalizeNullableString(value *string) *string {
 	}
 
 	return &normalized
+}
+
+func normalizeTags(tags []string) []string {
+	normalized := make([]string, 0, len(tags))
+	seen := make(map[string]struct{}, len(tags))
+
+	for _, tag := range tags {
+		value := strings.TrimSpace(tag)
+		if value == "" {
+			continue
+		}
+
+		key := strings.ToLower(value)
+		if _, ok := seen[key]; ok {
+			continue
+		}
+
+		seen[key] = struct{}{}
+		normalized = append(normalized, value)
+	}
+
+	return normalized
 }

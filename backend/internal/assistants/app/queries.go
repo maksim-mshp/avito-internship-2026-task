@@ -10,6 +10,7 @@ type GetByIDQuery struct {
 type ListQuery struct {
 	CategoryID      *string
 	Search          *string
+	Tag             *string
 	IncludeInactive bool
 	Page            int
 	PageSize        int

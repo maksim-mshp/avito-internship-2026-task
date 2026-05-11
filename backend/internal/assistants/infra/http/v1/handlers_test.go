@@ -10,7 +10,7 @@ import (
 )
 
 func TestParseListQueryAdminIncludeInactive(t *testing.T) {
-	req := httptest.NewRequest("GET", "/assistants?includeInactive=true&page=2&pageSize=20&q=food", nil)
+	req := httptest.NewRequest("GET", "/assistants?includeInactive=true&page=2&pageSize=20&q=food&tag=recipes", nil)
 	req = req.WithContext(security.WithClaims(req.Context(), security.Claims{UserID: "id", Role: security.RoleAdmin}))
 
 	query, apiErr := parseListQuery(req)
@@ -26,6 +26,9 @@ func TestParseListQueryAdminIncludeInactive(t *testing.T) {
 	}
 	if query.Search == nil || *query.Search != "food" {
 		t.Fatalf("unexpected search: %v", query.Search)
+	}
+	if query.Tag == nil || *query.Tag != "recipes" {
+		t.Fatalf("unexpected tag: %v", query.Tag)
 	}
 }
 

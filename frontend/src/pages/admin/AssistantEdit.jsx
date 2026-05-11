@@ -3,6 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom'
 import {Button} from 'primereact/button'
 import {Card} from 'primereact/card'
 import {Checkbox} from 'primereact/checkbox'
+import {Chips} from 'primereact/chips'
 import {Dropdown} from 'primereact/dropdown'
 import {InputText} from 'primereact/inputtext'
 import {InputTextarea} from 'primereact/inputtextarea'
@@ -11,6 +12,7 @@ import {ProgressSpinner} from 'primereact/progressspinner'
 import {ToastContext} from '../../context/ToastContext.jsx'
 import {getAssistant, getCategories, updateAssistant} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
+import {normalizeTags} from '../../services/tags.js'
 import '../../styles/Admin.css'
 
 const initialForm = {
@@ -20,6 +22,7 @@ const initialForm = {
     model: '',
     systemPrompt: '',
     exampleUserPrompt: '',
+    tags: [],
     isActive: true,
 }
 
@@ -55,6 +58,7 @@ export const AssistantEdit = () => {
                     model: assistant.model || '',
                     systemPrompt: assistant.systemPrompt || '',
                     exampleUserPrompt: assistant.exampleUserPrompt || '',
+                    tags: assistant.tags || [],
                     isActive: assistant.isActive,
                 })
             }
@@ -100,6 +104,7 @@ export const AssistantEdit = () => {
             model: form.model.trim(),
             systemPrompt: form.systemPrompt.trim(),
             exampleUserPrompt: form.exampleUserPrompt.trim() || null,
+            tags: normalizeTags(form.tags),
             isActive: form.isActive,
         }).then(() => {
             showSuccess('Ассистент обновлён')
@@ -169,6 +174,18 @@ export const AssistantEdit = () => {
                             />
                             <span>Активен</span>
                         </label>
+                    </div>
+
+                    <div className="admin-field">
+                        <label htmlFor="assistantEditTags">Теги</label>
+                        <Chips
+                            inputId="assistantEditTags"
+                            name="tags"
+                            value={form.tags}
+                            onChange={(event) => setField('tags', event.value || [])}
+                            separator=","
+                            placeholder="Тег"
+                        />
                     </div>
 
                     <div className="admin-field">

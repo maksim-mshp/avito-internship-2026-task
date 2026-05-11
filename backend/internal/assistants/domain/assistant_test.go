@@ -17,6 +17,7 @@ func TestNewAssistant(t *testing.T) {
 		"  mock-smart  ",
 		"  System prompt  ",
 		&examplePrompt,
+		[]string{"  recipes  ", "food", "recipes"},
 		nil,
 	)
 	if err != nil {
@@ -37,6 +38,9 @@ func TestNewAssistant(t *testing.T) {
 	}
 	if assistant.ExampleUserPrompt == nil || *assistant.ExampleUserPrompt != "ingredients" {
 		t.Fatalf("unexpected example prompt: %v", assistant.ExampleUserPrompt)
+	}
+	if len(assistant.Tags) != 2 || assistant.Tags[0] != "recipes" || assistant.Tags[1] != "food" {
+		t.Fatalf("unexpected tags: %v", assistant.Tags)
 	}
 	if !assistant.IsActive {
 		t.Fatalf("expected active assistant by default")
@@ -62,7 +66,7 @@ func TestNewAssistantValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewAssistant(tt.categoryID, tt.assistantName, tt.description, tt.model, tt.systemPrompt, nil, nil)
+			_, err := NewAssistant(tt.categoryID, tt.assistantName, tt.description, tt.model, tt.systemPrompt, nil, nil, nil)
 			if !errors.Is(err, tt.expected) {
 				t.Fatalf("expected %v, got %v", tt.expected, err)
 			}

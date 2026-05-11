@@ -49,9 +49,11 @@ export const AssistantList = () => {
     const [{assistants, pagination, loading, error}, dispatch] = useReducer(reducer, initialState)
     const [categories, setCategories] = useState([])
     const [searchDraft, setSearchDraft] = useState(searchParams.get('q') || '')
+    const [tagDraft, setTagDraft] = useState(searchParams.get('tag') || '')
 
     const page = Number(searchParams.get('page') || 1)
     const q = searchParams.get('q') || ''
+    const tag = searchParams.get('tag') || ''
     const categoryId = searchParams.get('categoryId') || null
     const includeInactive = searchParams.get('includeInactive') === 'true'
     const isAdmin = user?.role === 'admin'
@@ -77,6 +79,7 @@ export const AssistantList = () => {
             page,
             pageSize: PAGE_SIZE,
             q: q || undefined,
+            tag: tag || undefined,
             categoryId: categoryId || undefined,
             includeInactive: isAdmin && includeInactive ? true : undefined,
         }).then(({data}) => {
@@ -96,7 +99,7 @@ export const AssistantList = () => {
         return () => {
             cancelled = true
         }
-    }, [categoryId, includeInactive, isAdmin, page, q])
+    }, [categoryId, includeInactive, isAdmin, page, q, tag])
 
     const updateParams = (changes) => {
         const next = new URLSearchParams(searchParams)
@@ -118,11 +121,15 @@ export const AssistantList = () => {
 
     const applySearch = (event) => {
         event.preventDefault()
-        updateParams({q: searchDraft.trim()})
+        updateParams({
+            q: searchDraft.trim(),
+            tag: tagDraft.trim(),
+        })
     }
 
     const clearFilters = () => {
         setSearchDraft('')
+        setTagDraft('')
         setSearchParams({})
     }
 
@@ -153,6 +160,13 @@ export const AssistantList = () => {
                                 <Tag value={assistant.model} severity="secondary"/>
                                 {isAdmin && !assistant.isActive && <Tag value="выключен" severity="danger"/>}
                             </div>
+                            {assistant.tags?.length > 0 &&
+                                <div className="assistant-tags">
+                                    {assistant.tags.map(tagValue => (
+                                        <Tag key={tagValue} value={`#${tagValue}`} severity="info"/>
+                                    ))}
+                                </div>
+                            }
                             <p>{assistant.description}</p>
                             {assistant.exampleUserPrompt &&
                                 <small>Пример контекста: {assistant.exampleUserPrompt}</small>
@@ -194,6 +208,17 @@ export const AssistantList = () => {
                         value={searchDraft}
                         onChange={(event) => setSearchDraft(event.target.value)}
                         placeholder="Поиск"
+                    />
+                </IconField>
+
+                <IconField iconPosition="left" className="assistants-tag-filter">
+                    <InputIcon className="pi pi-tag"/>
+                    <InputText
+                        id="assistants-tag"
+                        name="tag"
+                        value={tagDraft}
+                        onChange={(event) => setTagDraft(event.target.value)}
+                        placeholder="Тег"
                     />
                 </IconField>
 

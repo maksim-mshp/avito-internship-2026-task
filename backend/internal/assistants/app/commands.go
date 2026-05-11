@@ -7,6 +7,7 @@ type CreateCommand struct {
 	Model             *string
 	SystemPrompt      *string
 	ExampleUserPrompt *string
+	Tags              []string
 	IsActive          *bool
 }
 
@@ -18,5 +19,6 @@ type UpdateCommand struct {
 	Model             *string
 	SystemPrompt      *string
 	ExampleUserPrompt *string
+	Tags              []string
 	IsActive          *bool
 }

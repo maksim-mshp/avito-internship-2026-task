@@ -7,6 +7,8 @@ import (
 
 func mapAssistant(assistant domain.Assistant) AssistantDTO {
 	systemPrompt := assistant.SystemPrompt
+	tags := make([]string, len(assistant.Tags))
+	copy(tags, assistant.Tags)
 
 	return AssistantDTO{
 		ID:                assistant.ID,
@@ -17,6 +19,7 @@ func mapAssistant(assistant domain.Assistant) AssistantDTO {
 		Model:             assistant.Model,
 		SystemPrompt:      &systemPrompt,
 		ExampleUserPrompt: assistant.ExampleUserPrompt,
+		Tags:              tags,
 		IsActive:          assistant.IsActive,
 		CreatedAt:         assistant.CreatedAt,
 		UpdatedAt:         assistant.UpdatedAt,

@@ -209,6 +209,7 @@ func activeAssistant() assistantdomain.Assistant {
 		"mock-smart",
 		"system",
 		nil,
+		[]string{"support"},
 		true,
 		nil,
 		nil,

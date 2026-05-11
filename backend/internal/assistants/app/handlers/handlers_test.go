@@ -182,6 +182,7 @@ func validCreateCommand() app.CreateCommand {
 		Description:  &description,
 		Model:        &model,
 		SystemPrompt: &systemPrompt,
+		Tags:         []string{"support", "text"},
 		IsActive:     &isActive,
 	}
 }
@@ -196,6 +197,7 @@ func validUpdateCommand() app.UpdateCommand {
 		Description:  command.Description,
 		Model:        command.Model,
 		SystemPrompt: command.SystemPrompt,
+		Tags:         command.Tags,
 		IsActive:     command.IsActive,
 	}
 }
@@ -210,6 +212,7 @@ func validAssistant() domain.Assistant {
 		"mock-smart",
 		"System",
 		nil,
+		[]string{"support"},
 		true,
 		nil,
 		nil,

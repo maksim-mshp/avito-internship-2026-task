@@ -24,6 +24,7 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 // @Security BearerAuth
 // @Param categoryId query string false "ID категории"
 // @Param q query string false "Поиск"
+// @Param tag query string false "Тег"
 // @Param includeInactive query bool false "Показывать неактивных"
 // @Param page query int false "Страница"
 // @Param pageSize query int false "Размер страницы"
@@ -103,6 +104,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Model:             request.Model,
 		SystemPrompt:      request.SystemPrompt,
 		ExampleUserPrompt: request.ExampleUserPrompt,
+		Tags:              request.Tags,
 		IsActive:          request.IsActive,
 	})
 	if err != nil {
@@ -142,6 +144,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		Model:             request.Model,
 		SystemPrompt:      request.SystemPrompt,
 		ExampleUserPrompt: request.ExampleUserPrompt,
+		Tags:              request.Tags,
 		IsActive:          request.IsActive,
 	})
 	if err != nil {
@@ -183,6 +186,7 @@ func parseListQuery(r *http.Request) (app.ListQuery, *corehttp.APIError) {
 	return app.ListQuery{
 		CategoryID:      optionalQuery(values.Get("categoryId")),
 		Search:          optionalQuery(values.Get("q")),
+		Tag:             optionalQuery(values.Get("tag")),
 		IncludeInactive: includeInactive,
 		Page:            page,
 		PageSize:        pageSize,

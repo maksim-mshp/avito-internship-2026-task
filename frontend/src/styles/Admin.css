@@ -34,6 +34,11 @@
     font-weight: 500;
 }
 
+.admin-field .p-chips,
+.admin-field .p-chips-multiple-container {
+    width: 100%;
+}
+
 .admin-form-grid {
     display: grid;
     gap: 18px;

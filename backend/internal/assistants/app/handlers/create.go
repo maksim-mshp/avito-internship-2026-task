@@ -29,6 +29,7 @@ func (h *CreateHandler) Handle(ctx context.Context, cmd app.CreateCommand) (doma
 		model,
 		systemPrompt,
 		cmd.ExampleUserPrompt,
+		cmd.Tags,
 		cmd.IsActive,
 	)
 	if err != nil {

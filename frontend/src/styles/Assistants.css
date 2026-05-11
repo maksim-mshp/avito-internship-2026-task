@@ -32,7 +32,12 @@
     min-width: min(100%, 320px);
 }
 
-.assistants-search .p-inputtext {
+.assistants-tag-filter {
+    min-width: min(100%, 180px);
+}
+
+.assistants-search .p-inputtext,
+.assistants-tag-filter .p-inputtext {
     width: 100%;
 }
 
@@ -76,6 +81,12 @@
 }
 
 .assistant-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.assistant-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;

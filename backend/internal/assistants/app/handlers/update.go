@@ -31,6 +31,7 @@ func (h *UpdateHandler) Handle(ctx context.Context, cmd app.UpdateCommand) (doma
 		valueOrEmpty(cmd.Model),
 		valueOrEmpty(cmd.SystemPrompt),
 		cmd.ExampleUserPrompt,
+		cmd.Tags,
 		cmd.IsActive,
 	)
 	if err != nil {

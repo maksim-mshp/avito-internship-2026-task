@@ -46,6 +46,11 @@ components:
           type: string
         systemPrompt:
           type: string
+        tags:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     v1.AssistantDTO:
       properties:
@@ -69,6 +74,11 @@ components:
           type: string
         systemPrompt:
           type: string
+        tags:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
         updatedAt:
           type: string
       type: object
@@ -88,6 +98,11 @@ components:
           type: string
         systemPrompt:
           type: string
+        tags:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     v1.AssistantsResponse:
       properties:
@@ -304,6 +319,11 @@ paths:
       - description: Поиск
         in: query
         name: q
+        schema:
+          type: string
+      - description: Тег
+        in: query
+        name: tag
         schema:
           type: string
       - description: Показывать неактивных

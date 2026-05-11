@@ -31,15 +31,16 @@ type categoryDTO struct {
 }
 
 type assistantDTO struct {
-	ID                string  `json:"id"`
-	CategoryID        string  `json:"categoryId"`
-	CategoryName      *string `json:"categoryName"`
-	Name              string  `json:"name"`
-	Description       string  `json:"description"`
-	Model             string  `json:"model"`
-	SystemPrompt      *string `json:"systemPrompt"`
-	ExampleUserPrompt *string `json:"exampleUserPrompt"`
-	IsActive          bool    `json:"isActive"`
+	ID                string   `json:"id"`
+	CategoryID        string   `json:"categoryId"`
+	CategoryName      *string  `json:"categoryName"`
+	Name              string   `json:"name"`
+	Description       string   `json:"description"`
+	Model             string   `json:"model"`
+	SystemPrompt      *string  `json:"systemPrompt"`
+	ExampleUserPrompt *string  `json:"exampleUserPrompt"`
+	Tags              []string `json:"tags"`
+	IsActive          bool     `json:"isActive"`
 }
 
 type assistantsResponse struct {
@@ -94,6 +95,17 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 	}
 	if foundAssistant.CategoryName == nil || *foundAssistant.CategoryName != category.Name {
 		t.Fatalf("unexpected assistant category name: got=%v want=%q", foundAssistant.CategoryName, category.Name)
+	}
+	if !hasTag(foundAssistant.Tags, "integration") {
+		t.Fatalf("expected assistant tags to contain integration, got=%v", foundAssistant.Tags)
+	}
+
+	tagResp := s.requestJSON(t, http.MethodGet, "/assistants?tag=integration&page=1&pageSize=10", nil, userToken)
+	assertStatus(t, tagResp, http.StatusOK)
+
+	tagBody := decodeJSON[assistantsResponse](t, tagResp.body)
+	if _, ok = findAssistant(tagBody.Assistants, assistant.ID); !ok {
+		t.Fatalf("created assistant %s was not found by tag", assistant.ID)
 	}
 
 	userPrompt := "проверь интеграционный запуск"
@@ -252,6 +264,7 @@ func createAssistant(t *testing.T, s *suite, token string, categoryID string, is
 		"model":             model,
 		"systemPrompt":      systemPrompt,
 		"exampleUserPrompt": exampleUserPrompt,
+		"tags":              []string{"integration", "mock"},
 		"isActive":          isActive,
 	}, token)
 	assertStatus(t, resp, http.StatusCreated)
@@ -269,6 +282,9 @@ func createAssistant(t *testing.T, s *suite, token string, categoryID string, is
 	if assistant.IsActive != isActive {
 		t.Fatalf("unexpected assistant active flag: got=%v want=%v", assistant.IsActive, isActive)
 	}
+	if !hasTag(assistant.Tags, "integration") {
+		t.Fatalf("unexpected assistant tags: %v", assistant.Tags)
+	}
 
 	return assistant
 }
@@ -281,6 +297,16 @@ func findAssistant(assistants []assistantDTO, assistantID string) (assistantDTO,
 	}
 
 	return assistantDTO{}, false
+}
+
+func hasTag(tags []string, expected string) bool {
+	for _, tag := range tags {
+		if tag == expected {
+			return true
+		}
+	}
+
+	return false
 }
 
 func findRun(runs []runDTO, runID string) (runDTO, bool) {

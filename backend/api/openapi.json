@@ -70,6 +70,13 @@
                     },
                     "systemPrompt": {
                         "type": "string"
+                    },
+                    "tags": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
                     }
                 },
                 "type": "object"
@@ -106,6 +113,13 @@
                     "systemPrompt": {
                         "type": "string"
                     },
+                    "tags": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
+                    },
                     "updatedAt": {
                         "type": "string"
                     }
@@ -134,6 +148,13 @@
                     },
                     "systemPrompt": {
                         "type": "string"
+                    },
+                    "tags": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
                     }
                 },
                 "type": "object"
@@ -473,6 +494,14 @@
                         "description": "Поиск",
                         "in": "query",
                         "name": "q",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Тег",
+                        "in": "query",
+                        "name": "tag",
                         "schema": {
                             "type": "string"
                         }

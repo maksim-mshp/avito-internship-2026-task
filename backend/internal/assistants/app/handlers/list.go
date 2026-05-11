@@ -34,5 +34,14 @@ func (h *ListHandler) Handle(ctx context.Context, query app.ListQuery) (app.List
 		}
 	}
 
+	if query.Tag != nil {
+		tag := strings.TrimSpace(*query.Tag)
+		if tag == "" {
+			query.Tag = nil
+		} else {
+			query.Tag = &tag
+		}
+	}
+
 	return h.repo.List(ctx, query)
 }

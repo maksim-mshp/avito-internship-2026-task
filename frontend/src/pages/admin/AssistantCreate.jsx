@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import {Button} from 'primereact/button'
 import {Card} from 'primereact/card'
 import {Checkbox} from 'primereact/checkbox'
+import {Chips} from 'primereact/chips'
 import {Dropdown} from 'primereact/dropdown'
 import {InputText} from 'primereact/inputtext'
 import {InputTextarea} from 'primereact/inputtextarea'
@@ -10,6 +11,7 @@ import {Message} from 'primereact/message'
 import {ToastContext} from '../../context/ToastContext.jsx'
 import {createAssistant, getCategories} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
+import {normalizeTags} from '../../services/tags.js'
 import '../../styles/Admin.css'
 
 const initialForm = {
@@ -19,6 +21,7 @@ const initialForm = {
     model: 'mock-smart',
     systemPrompt: '',
     exampleUserPrompt: '',
+    tags: [],
     isActive: true,
 }
 
@@ -80,6 +83,7 @@ export const AssistantCreate = () => {
             model: form.model.trim(),
             systemPrompt: form.systemPrompt.trim(),
             exampleUserPrompt: form.exampleUserPrompt.trim() || null,
+            tags: normalizeTags(form.tags),
             isActive: form.isActive,
         }).then(({data}) => {
             showSuccess('Ассистент создан')
@@ -141,6 +145,18 @@ export const AssistantCreate = () => {
                             />
                             <span>Активен</span>
                         </label>
+                    </div>
+
+                    <div className="admin-field">
+                        <label htmlFor="assistantTags">Теги</label>
+                        <Chips
+                            inputId="assistantTags"
+                            name="tags"
+                            value={form.tags}
+                            onChange={(event) => setField('tags', event.value || [])}
+                            separator=","
+                            placeholder="Тег"
+                        />
                     </div>
 
                     <div className="admin-field">

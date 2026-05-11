@@ -33,6 +33,7 @@ func (r *Repository) List(ctx context.Context, query app.ListQuery) (app.ListRes
 		listQuery,
 		nullableString(query.CategoryID),
 		nullableString(query.Search),
+		nullableString(query.Tag),
 		query.IncludeInactive,
 		query.PageSize,
 		offset,
@@ -91,6 +92,7 @@ func (r *Repository) Create(ctx context.Context, assistant domain.Assistant) (do
 		assistant.Model,
 		assistant.SystemPrompt,
 		assistant.ExampleUserPrompt,
+		assistant.Tags,
 		assistant.IsActive,
 	))
 	if err != nil {
@@ -111,6 +113,7 @@ func (r *Repository) Update(ctx context.Context, assistant domain.Assistant) (do
 		assistant.Model,
 		assistant.SystemPrompt,
 		assistant.ExampleUserPrompt,
+		assistant.Tags,
 		assistant.IsActive,
 	))
 	if err != nil {
@@ -134,6 +137,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		model             string
 		systemPrompt      string
 		exampleUserPrompt *string
+		tags              []string
 		isActive          bool
 		createdAt         time.Time
 		updatedAt         time.Time
@@ -148,6 +152,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		&model,
 		&systemPrompt,
 		&exampleUserPrompt,
+		&tags,
 		&isActive,
 		&createdAt,
 		&updatedAt,
@@ -164,6 +169,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		model,
 		systemPrompt,
 		exampleUserPrompt,
+		tags,
 		isActive,
 		&createdAt,
 		&updatedAt,
@@ -180,6 +186,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		model             string
 		systemPrompt      string
 		exampleUserPrompt *string
+		tags              []string
 		isActive          bool
 		createdAt         time.Time
 		updatedAt         time.Time
@@ -195,6 +202,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		&model,
 		&systemPrompt,
 		&exampleUserPrompt,
+		&tags,
 		&isActive,
 		&createdAt,
 		&updatedAt,
@@ -212,6 +220,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		model,
 		systemPrompt,
 		exampleUserPrompt,
+		tags,
 		isActive,
 		&createdAt,
 		&updatedAt,
