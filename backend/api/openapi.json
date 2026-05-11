@@ -1,0 +1,1294 @@
+{
+    "components": {
+        "schemas": {
+            "ai-assistants-catalog_internal_assistants_infra_http_v1.PaginationDTO": {
+                "properties": {
+                    "page": {
+                        "type": "integer"
+                    },
+                    "pageSize": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ai-assistants-catalog_internal_runs_infra_http_v1.PaginationDTO": {
+                "properties": {
+                    "page": {
+                        "type": "integer"
+                    },
+                    "pageSize": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "http.ErrorBody": {
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "http.ErrorResponse": {
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/http.ErrorBody"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.AssistantCreateRequest": {
+                "properties": {
+                    "categoryId": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "exampleUserPrompt": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "systemPrompt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.AssistantDTO": {
+                "properties": {
+                    "categoryId": {
+                        "type": "string"
+                    },
+                    "categoryName": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "exampleUserPrompt": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "systemPrompt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.AssistantUpdateRequest": {
+                "properties": {
+                    "categoryId": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "exampleUserPrompt": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "systemPrompt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.AssistantsResponse": {
+                "properties": {
+                    "assistants": {
+                        "items": {
+                            "$ref": "#/components/schemas/v1.AssistantDTO"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
+                    },
+                    "pagination": {
+                        "$ref": "#/components/schemas/ai-assistants-catalog_internal_assistants_infra_http_v1.PaginationDTO"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.CategoriesResponse": {
+                "properties": {
+                    "categories": {
+                        "items": {
+                            "$ref": "#/components/schemas/v1.CategoryDTO"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
+                    }
+                },
+                "type": "object"
+            },
+            "v1.CategoryCreateRequest": {
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.CategoryDTO": {
+                "properties": {
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.DummyLoginRequest": {
+                "properties": {
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.LoginRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RegisterRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RegisterResponse": {
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/v1.UserDTO"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RunCreateRequest": {
+                "properties": {
+                    "userPrompt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RunDTO": {
+                "properties": {
+                    "assistantId": {
+                        "type": "string"
+                    },
+                    "assistantName": {
+                        "type": "string"
+                    },
+                    "categoryId": {
+                        "type": "string"
+                    },
+                    "categoryName": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "output": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "userPrompt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RunsResponse": {
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/ai-assistants-catalog_internal_runs_infra_http_v1.PaginationDTO"
+                    },
+                    "runs": {
+                        "items": {
+                            "$ref": "#/components/schemas/v1.RunDTO"
+                        },
+                        "type": "array",
+                        "uniqueItems": false
+                    }
+                },
+                "type": "object"
+            },
+            "v1.TokenResponse": {
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/v1.UserDTO"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.UserDTO": {
+                "properties": {
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "BearerAuth": {
+                "description": "Формат: `Bearer {token}`",
+                "in": "header",
+                "name": "Authorization",
+                "type": "apiKey"
+            }
+        }
+    },
+    "info": {
+        "description": "Каталог AI-ассистентов",
+        "title": "AI Assistants Catalog API",
+        "version": "1.0.0"
+    },
+    "externalDocs": {
+        "description": "",
+        "url": ""
+    },
+    "paths": {
+        "/_info": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Состояние сервиса",
+                "tags": [
+                    "System"
+                ]
+            }
+        },
+        "/admin/runs": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "query",
+                        "name": "assistantId",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Статус",
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Страница",
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Размер страницы",
+                        "in": "query",
+                        "name": "pageSize",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.RunsResponse"
+                                }
+                            }
+                        },
+                        "description": "Список запусков"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Недостаточно прав"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Все запуски ассистентов",
+                "tags": [
+                    "Runs"
+                ]
+            }
+        },
+        "/assistants": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "ID категории",
+                        "in": "query",
+                        "name": "categoryId",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Поиск",
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Показывать неактивных",
+                        "in": "query",
+                        "name": "includeInactive",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "description": "Страница",
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Размер страницы",
+                        "in": "query",
+                        "name": "pageSize",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.AssistantsResponse"
+                                }
+                            }
+                        },
+                        "description": "Список ассистентов"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Список ассистентов",
+                "tags": [
+                    "Assistants"
+                ]
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.AssistantCreateRequest",
+                                "summary": "request",
+                                "description": "AssistantCreateRequest"
+                            }
+                        }
+                    },
+                    "description": "AssistantCreateRequest",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.AssistantDTO"
+                                }
+                            }
+                        },
+                        "description": "Ассистент создан"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Недостаточно прав"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Создать ассистента",
+                "tags": [
+                    "Assistants"
+                ]
+            }
+        },
+        "/assistants/{assistantId}": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "path",
+                        "name": "assistantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.AssistantDTO"
+                                }
+                            }
+                        },
+                        "description": "Ассистент"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ассистент не найден"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Получить ассистента",
+                "tags": [
+                    "Assistants"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "path",
+                        "name": "assistantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.AssistantUpdateRequest",
+                                "summary": "request",
+                                "description": "AssistantUpdateRequest"
+                            }
+                        }
+                    },
+                    "description": "AssistantUpdateRequest",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.AssistantDTO"
+                                }
+                            }
+                        },
+                        "description": "Ассистент обновлен"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Недостаточно прав"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ассистент не найден"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Обновить ассистента",
+                "tags": [
+                    "Assistants"
+                ]
+            }
+        },
+        "/assistants/{assistantId}/run": {
+            "post": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "path",
+                        "name": "assistantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.RunCreateRequest",
+                                "summary": "request",
+                                "description": "RunCreateRequest"
+                            }
+                        }
+                    },
+                    "description": "RunCreateRequest",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.RunDTO"
+                                }
+                            }
+                        },
+                        "description": "Запуск создан"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ассистент не найден"
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ассистент выключен"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    },
+                    "502": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ошибка LLM-провайдера"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Запустить ассистента",
+                "tags": [
+                    "Runs"
+                ]
+            }
+        },
+        "/categories": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.CategoriesResponse"
+                                }
+                            }
+                        },
+                        "description": "Список категорий"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Список категорий",
+                "tags": [
+                    "Categories"
+                ]
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.CategoryCreateRequest",
+                                "summary": "request",
+                                "description": "CategoryCreateRequest"
+                            }
+                        }
+                    },
+                    "description": "CategoryCreateRequest",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.CategoryDTO"
+                                }
+                            }
+                        },
+                        "description": "Категория создана"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Недостаточно прав"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Создать категорию",
+                "tags": [
+                    "Categories"
+                ]
+            }
+        },
+        "/dummyLogin": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.DummyLoginRequest",
+                                "summary": "request",
+                                "description": "DummyLoginRequest"
+                            }
+                        }
+                    },
+                    "description": "DummyLoginRequest",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.TokenResponse"
+                                }
+                            }
+                        },
+                        "description": "JWT и пользователь"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "summary": "Тестовая авторизация",
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.LoginRequest",
+                                "summary": "request",
+                                "description": "LoginRequest"
+                            }
+                        }
+                    },
+                    "description": "LoginRequest",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.TokenResponse"
+                                }
+                            }
+                        },
+                        "description": "JWT и пользователь"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Неверные учетные данные"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "summary": "Авторизация пользователя",
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/register": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.RegisterRequest",
+                                "summary": "request",
+                                "description": "RegisterRequest"
+                            }
+                        }
+                    },
+                    "description": "RegisterRequest",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.RegisterResponse"
+                                }
+                            }
+                        },
+                        "description": "Пользователь создан"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Email уже занят"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "summary": "Регистрация пользователя",
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/runs/my": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "Статус",
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Страница",
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Размер страницы",
+                        "in": "query",
+                        "name": "pageSize",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.RunsResponse"
+                                }
+                            }
+                        },
+                        "description": "История запусков"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "История запусков пользователя",
+                "tags": [
+                    "Runs"
+                ]
+            }
+        }
+    },
+    "openapi": "3.1.0",
+    "servers": [
+        {
+            "url": "/"
+        }
+    ]
+}

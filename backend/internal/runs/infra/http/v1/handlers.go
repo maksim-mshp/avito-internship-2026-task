@@ -19,6 +19,19 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 	return &Handler{handlers: handlers}
 }
 
+// @Summary Запустить ассистента
+// @Tags Runs
+// @Security BearerAuth
+// @Param assistantId path string true "ID ассистента"
+// @Param request body RunCreateRequest true "RunCreateRequest"
+// @Success 201 {object} RunDTO "Запуск создан"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 404 {object} corehttp.ErrorResponse "Ассистент не найден"
+// @Failure 409 {object} corehttp.ErrorResponse "Ассистент выключен"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Failure 502 {object} corehttp.ErrorResponse "Ошибка LLM-провайдера"
+// @Router /assistants/{assistantId}/run [POST]
 func (h *Handler) RunAssistant(w http.ResponseWriter, r *http.Request) {
 	claims, ok := security.ClaimsFromContext(r.Context())
 	if !ok {
@@ -47,6 +60,17 @@ func (h *Handler) RunAssistant(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusCreated, mapRun(run))
 }
 
+// @Summary История запусков пользователя
+// @Tags Runs
+// @Security BearerAuth
+// @Param status query string false "Статус"
+// @Param page query int false "Страница"
+// @Param pageSize query int false "Размер страницы"
+// @Success 200 {object} RunsResponse "История запусков"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /runs/my [GET]
 func (h *Handler) ListMy(w http.ResponseWriter, r *http.Request) {
 	claims, ok := security.ClaimsFromContext(r.Context())
 	if !ok {
@@ -75,6 +99,19 @@ func (h *Handler) ListMy(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusOK, mapListResult(result))
 }
 
+// @Summary Все запуски ассистентов
+// @Tags Runs
+// @Security BearerAuth
+// @Param assistantId query string false "ID ассистента"
+// @Param status query string false "Статус"
+// @Param page query int false "Страница"
+// @Param pageSize query int false "Размер страницы"
+// @Success 200 {object} RunsResponse "Список запусков"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 403 {object} corehttp.ErrorResponse "Недостаточно прав"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /admin/runs [GET]
 func (h *Handler) ListAdmin(w http.ResponseWriter, r *http.Request) {
 	query, apiErr := parseListQuery(r)
 	if apiErr != nil {

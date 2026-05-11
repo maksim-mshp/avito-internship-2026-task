@@ -17,6 +17,13 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 	return &Handler{handlers: handlers}
 }
 
+// @Summary Список категорий
+// @Tags Categories
+// @Security BearerAuth
+// @Success 200 {object} CategoriesResponse "Список категорий"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /categories [GET]
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	categories, err := h.handlers.GetAll.Handle(r.Context(), app.GetAllQuery{})
 	if err != nil {
@@ -30,6 +37,16 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// @Summary Создать категорию
+// @Tags Categories
+// @Security BearerAuth
+// @Param request body CategoryCreateRequest true "CategoryCreateRequest"
+// @Success 201 {object} CategoryDTO "Категория создана"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 403 {object} corehttp.ErrorResponse "Недостаточно прав"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /categories [POST]
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var request CategoryCreateRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)

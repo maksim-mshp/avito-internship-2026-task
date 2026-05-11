@@ -17,6 +17,14 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 	return &Handler{handlers: handlers}
 }
 
+// @Summary Регистрация пользователя
+// @Tags Auth
+// @Param request body RegisterRequest true "RegisterRequest"
+// @Success 201 {object} RegisterResponse "Пользователь создан"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 409 {object} corehttp.ErrorResponse "Email уже занят"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /register [POST]
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var request RegisterRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)
@@ -50,6 +58,14 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// @Summary Авторизация пользователя
+// @Tags Auth
+// @Param request body LoginRequest true "LoginRequest"
+// @Success 200 {object} TokenResponse "JWT и пользователь"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Неверные учетные данные"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /login [POST]
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var request LoginRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)
@@ -78,6 +94,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// @Summary Тестовая авторизация
+// @Tags Auth
+// @Param request body DummyLoginRequest true "DummyLoginRequest"
+// @Success 200 {object} TokenResponse "JWT и пользователь"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /dummyLogin [POST]
 func (h *Handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	var request DummyLoginRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)

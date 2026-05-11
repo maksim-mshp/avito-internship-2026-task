@@ -19,6 +19,19 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 	return &Handler{handlers: handlers}
 }
 
+// @Summary Список ассистентов
+// @Tags Assistants
+// @Security BearerAuth
+// @Param categoryId query string false "ID категории"
+// @Param q query string false "Поиск"
+// @Param includeInactive query bool false "Показывать неактивных"
+// @Param page query int false "Страница"
+// @Param pageSize query int false "Размер страницы"
+// @Success 200 {object} AssistantsResponse "Список ассистентов"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants [GET]
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	query, apiErr := parseListQuery(r)
 	if apiErr != nil {
@@ -36,6 +49,15 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusOK, mapListResult(result))
 }
 
+// @Summary Получить ассистента
+// @Tags Assistants
+// @Security BearerAuth
+// @Param assistantId path string true "ID ассистента"
+// @Success 200 {object} AssistantDTO "Ассистент"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 404 {object} corehttp.ErrorResponse "Ассистент не найден"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants/{assistantId} [GET]
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	claims, ok := security.ClaimsFromContext(r.Context())
 	if !ok {
@@ -56,6 +78,16 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusOK, mapAssistant(assistant))
 }
 
+// @Summary Создать ассистента
+// @Tags Assistants
+// @Security BearerAuth
+// @Param request body AssistantCreateRequest true "AssistantCreateRequest"
+// @Success 201 {object} AssistantDTO "Ассистент создан"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 403 {object} corehttp.ErrorResponse "Недостаточно прав"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants [POST]
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var request AssistantCreateRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)
@@ -82,6 +114,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusCreated, mapAssistant(assistant))
 }
 
+// @Summary Обновить ассистента
+// @Tags Assistants
+// @Security BearerAuth
+// @Param assistantId path string true "ID ассистента"
+// @Param request body AssistantUpdateRequest true "AssistantUpdateRequest"
+// @Success 200 {object} AssistantDTO "Ассистент обновлен"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 403 {object} corehttp.ErrorResponse "Недостаточно прав"
+// @Failure 404 {object} corehttp.ErrorResponse "Ассистент не найден"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants/{assistantId} [PUT]
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var request AssistantUpdateRequest
 	apiErr := corehttp.ParseJSONBody(r, &request)

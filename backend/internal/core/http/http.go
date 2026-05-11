@@ -9,6 +9,10 @@ import (
 	"mime"
 	"net/http"
 	"time"
+
+	projectembed "ai-assistants-catalog"
+
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type APIError struct {
@@ -82,6 +86,14 @@ func ParseJSONBody(r *http.Request, data any) *APIError {
 	return nil
 }
 
+// @Title						AI Assistants Catalog API
+// @Version					1.0.0
+// @Description					Каталог AI-ассистентов
+// @Servers.Url					/
+// @SecurityDefinitions.APIKey	BearerAuth
+// @In							header
+// @Name						Authorization
+// @Description					Формат: `Bearer {token}`
 func NewServer(port int, handler http.Handler) (*http.Server, error) {
 	if port <= 0 {
 		return nil, fmt.Errorf("port must be positive")
@@ -94,4 +106,17 @@ func NewServer(port int, handler http.Handler) (*http.Server, error) {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
 	}, nil
+}
+
+func RegisterSwagger(mux *http.ServeMux) error {
+	mux.HandleFunc("/swagger/openapi.yml", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFileFS(w, r, projectembed.SwaggerFS, "api/openapi.yml")
+	})
+	mux.HandleFunc("/swagger/openapi.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFileFS(w, r, projectembed.SwaggerFS, "api/openapi.json")
+	})
+	mux.Handle("/swagger/", httpSwagger.Handler(
+		httpSwagger.URL("openapi.yml"),
+	))
+	return nil
 }

@@ -51,6 +51,9 @@ func Start(cfg *config.Config) (*App, error) {
 
 	mux := http.NewServeMux()
 
+	if err = corehttp.RegisterSwagger(mux); err != nil {
+		return nil, err
+	}
 	corehttp.RegisterRoutes(mux)
 	authMW := middleware.RequireAuthMiddleware(cfg.JWTToken)
 	adminMW := middleware.RequireAdminMiddleware()
