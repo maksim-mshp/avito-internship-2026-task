@@ -42,6 +42,9 @@ func TestNewAssistant(t *testing.T) {
 	if len(assistant.Tags) != 2 || assistant.Tags[0] != "recipes" || assistant.Tags[1] != "food" {
 		t.Fatalf("unexpected tags: %v", assistant.Tags)
 	}
+	if assistant.IsFavorite {
+		t.Fatalf("expected new assistant to be not favorite")
+	}
 	if !assistant.IsActive {
 		t.Fatalf("expected active assistant by default")
 	}

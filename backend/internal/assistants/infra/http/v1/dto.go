@@ -12,6 +12,7 @@ type AssistantDTO struct {
 	SystemPrompt      *string    `json:"systemPrompt,omitempty"`
 	ExampleUserPrompt *string    `json:"exampleUserPrompt,omitempty"`
 	Tags              []string   `json:"tags"`
+	IsFavorite        bool       `json:"isFavorite"`
 	IsActive          bool       `json:"isActive"`
 	CreatedAt         *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`

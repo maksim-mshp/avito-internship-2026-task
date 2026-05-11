@@ -24,6 +24,14 @@ export const getAssistant = (assistantId) => {
     return api.get(`/assistants/${assistantId}`)
 }
 
+export const addFavoriteAssistant = (assistantId) => {
+    return api.put(`/assistants/${assistantId}/favorite`)
+}
+
+export const removeFavoriteAssistant = (assistantId) => {
+    return api.delete(`/assistants/${assistantId}/favorite`)
+}
+
 export const runAssistant = (assistantId, userPrompt) => {
     return api.post(`/assistants/${assistantId}/run`, {userPrompt})
 }

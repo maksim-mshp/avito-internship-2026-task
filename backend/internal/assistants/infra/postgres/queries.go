@@ -12,6 +12,11 @@ const (
 			a.system_prompt,
 			a.example_user_prompt,
 			a.tags,
+			EXISTS (
+				SELECT 1
+				FROM ai_assistants_catalog.assistant_favorites f
+				WHERE f.assistant_id = a.id AND f.user_id = $4::uuid
+			),
 			a.is_active,
 			a.created_at,
 			a.updated_at,
@@ -29,9 +34,14 @@ const (
 				FROM unnest(a.tags) tag
 				WHERE LOWER(tag) = LOWER($3)
 			))
-			AND ($4::boolean OR a.is_active)
+			AND ($5::boolean OR a.is_active)
+			AND (NOT $6::boolean OR EXISTS (
+				SELECT 1
+				FROM ai_assistants_catalog.assistant_favorites f
+				WHERE f.assistant_id = a.id AND f.user_id = $4::uuid
+			))
 		ORDER BY a.created_at DESC, a.name ASC
-		LIMIT $5 OFFSET $6;
+		LIMIT $7 OFFSET $8;
 	`
 
 	getByIDQuery = `
@@ -45,6 +55,11 @@ const (
 			a.system_prompt,
 			a.example_user_prompt,
 			a.tags,
+			EXISTS (
+				SELECT 1
+				FROM ai_assistants_catalog.assistant_favorites f
+				WHERE f.assistant_id = a.id AND f.user_id = $3::uuid
+			),
 			a.is_active,
 			a.created_at,
 			a.updated_at
@@ -76,6 +91,7 @@ const (
 			system_prompt,
 			example_user_prompt,
 			tags,
+			FALSE,
 			is_active,
 			created_at,
 			updated_at;
@@ -104,8 +120,31 @@ const (
 			system_prompt,
 			example_user_prompt,
 			tags,
+			FALSE,
 			is_active,
 			created_at,
 			updated_at;
+	`
+
+	addFavoriteQuery = `
+		WITH favorite AS (
+			INSERT INTO ai_assistants_catalog.assistant_favorites (
+				user_id,
+				assistant_id
+			)
+			SELECT $1, a.id
+			FROM ai_assistants_catalog.assistants a
+			WHERE a.id = $2 AND ($3::boolean OR a.is_active)
+			ON CONFLICT (user_id, assistant_id)
+			DO UPDATE SET assistant_id = EXCLUDED.assistant_id
+			RETURNING assistant_id
+		)
+		SELECT assistant_id::text
+		FROM favorite;
+	`
+
+	removeFavoriteQuery = `
+		DELETE FROM ai_assistants_catalog.assistant_favorites
+		WHERE user_id = $1 AND assistant_id = $2;
 	`
 )

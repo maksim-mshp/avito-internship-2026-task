@@ -10,8 +10,11 @@ import (
 )
 
 func TestParseListQueryAdminIncludeInactive(t *testing.T) {
-	req := httptest.NewRequest("GET", "/assistants?includeInactive=true&page=2&pageSize=20&q=food&tag=recipes", nil)
-	req = req.WithContext(security.WithClaims(req.Context(), security.Claims{UserID: "id", Role: security.RoleAdmin}))
+	req := httptest.NewRequest("GET", "/assistants?includeInactive=true&favoritesOnly=true&page=2&pageSize=20&q=food&tag=recipes", nil)
+	req = req.WithContext(security.WithClaims(req.Context(), security.Claims{
+		UserID: "44c75af3-eca3-4867-85fc-b8245eaafa3a",
+		Role:   security.RoleAdmin,
+	}))
 
 	query, apiErr := parseListQuery(req)
 	if apiErr != nil {
@@ -29,6 +32,12 @@ func TestParseListQueryAdminIncludeInactive(t *testing.T) {
 	}
 	if query.Tag == nil || *query.Tag != "recipes" {
 		t.Fatalf("unexpected tag: %v", query.Tag)
+	}
+	if query.UserID != "44c75af3-eca3-4867-85fc-b8245eaafa3a" {
+		t.Fatalf("unexpected user id: %s", query.UserID)
+	}
+	if !query.FavoritesOnly {
+		t.Fatalf("expected favorites only")
 	}
 }
 

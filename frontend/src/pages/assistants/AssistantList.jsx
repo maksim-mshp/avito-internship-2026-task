@@ -12,7 +12,7 @@ import {Paginator} from 'primereact/paginator'
 import {ProgressSpinner} from 'primereact/progressspinner'
 import {Tag} from 'primereact/tag'
 import {AuthContext} from '../../context/AuthContext.jsx'
-import {getAssistants, getCategories} from '../../services/catalog.js'
+import {addFavoriteAssistant, getAssistants, getCategories, removeFavoriteAssistant} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
 import '../../styles/Assistants.css'
 
@@ -50,12 +50,15 @@ export const AssistantList = () => {
     const [categories, setCategories] = useState([])
     const [searchDraft, setSearchDraft] = useState(searchParams.get('q') || '')
     const [tagDraft, setTagDraft] = useState(searchParams.get('tag') || '')
+    const [refreshKey, setRefreshKey] = useState(0)
+    const [favoriteLoadingId, setFavoriteLoadingId] = useState(null)
 
     const page = Number(searchParams.get('page') || 1)
     const q = searchParams.get('q') || ''
     const tag = searchParams.get('tag') || ''
     const categoryId = searchParams.get('categoryId') || null
     const includeInactive = searchParams.get('includeInactive') === 'true'
+    const favoritesOnly = searchParams.get('favoritesOnly') === 'true'
     const isAdmin = user?.role === 'admin'
 
     const categoryOptions = useMemo(() => [
@@ -81,6 +84,7 @@ export const AssistantList = () => {
             q: q || undefined,
             tag: tag || undefined,
             categoryId: categoryId || undefined,
+            favoritesOnly: favoritesOnly || undefined,
             includeInactive: isAdmin && includeInactive ? true : undefined,
         }).then(({data}) => {
             if (!cancelled) {
@@ -99,7 +103,7 @@ export const AssistantList = () => {
         return () => {
             cancelled = true
         }
-    }, [categoryId, includeInactive, isAdmin, page, q, tag])
+    }, [categoryId, favoritesOnly, includeInactive, isAdmin, page, q, refreshKey, tag])
 
     const updateParams = (changes) => {
         const next = new URLSearchParams(searchParams)
@@ -131,6 +135,22 @@ export const AssistantList = () => {
         setSearchDraft('')
         setTagDraft('')
         setSearchParams({})
+    }
+
+    const toggleFavorite = (assistant) => {
+        setFavoriteLoadingId(assistant.id)
+
+        const request = assistant.isFavorite
+            ? removeFavoriteAssistant(assistant.id)
+            : addFavoriteAssistant(assistant.id)
+
+        request.then(() => {
+            setRefreshKey(value => value + 1)
+        }).catch((err) => {
+            dispatch({type: 'error', error: getTranslatedError(err)})
+        }).finally(() => {
+            setFavoriteLoadingId(null)
+        })
     }
 
     const renderContent = () => {
@@ -171,12 +191,23 @@ export const AssistantList = () => {
                             {assistant.exampleUserPrompt &&
                                 <small>Пример контекста: {assistant.exampleUserPrompt}</small>
                             }
-                            <Button
-                                outlined
-                                icon="pi pi-arrow-right"
-                                label="Открыть"
-                                onClick={() => navigate(`/assistants/${assistant.id}`)}
-                            />
+                            <div className="assistant-card-actions">
+                                <Button
+                                    rounded
+                                    text
+                                    severity={assistant.isFavorite ? 'danger' : 'secondary'}
+                                    icon={assistant.isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'}
+                                    aria-label={assistant.isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
+                                    loading={favoriteLoadingId === assistant.id}
+                                    onClick={() => toggleFavorite(assistant)}
+                                />
+                                <Button
+                                    outlined
+                                    icon="pi pi-arrow-right"
+                                    label="Открыть"
+                                    onClick={() => navigate(`/assistants/${assistant.id}`)}
+                                />
+                            </div>
                         </Card>
                     ))}
                 </div>
@@ -242,6 +273,16 @@ export const AssistantList = () => {
                         <span>Показать неактивных</span>
                     </label>
                 }
+
+                <label className="assistants-checkbox">
+                    <Checkbox
+                        inputId="favoritesOnly"
+                        name="favoritesOnly"
+                        checked={favoritesOnly}
+                        onChange={(event) => updateParams({favoritesOnly: event.checked})}
+                    />
+                    <span>Только избранные</span>
+                </label>
 
                 <Button type="submit" icon="pi pi-search" label="Найти"/>
                 <Button type="button" outlined icon="pi pi-filter-slash" label="Сбросить" onClick={clearFilters}/>

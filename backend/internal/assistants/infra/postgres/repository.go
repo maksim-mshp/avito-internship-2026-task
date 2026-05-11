@@ -34,7 +34,9 @@ func (r *Repository) List(ctx context.Context, query app.ListQuery) (app.ListRes
 		nullableString(query.CategoryID),
 		nullableString(query.Search),
 		nullableString(query.Tag),
+		nullableUserID(query.UserID),
 		query.IncludeInactive,
+		query.FavoritesOnly,
 		query.PageSize,
 		offset,
 	)
@@ -69,8 +71,8 @@ func (r *Repository) List(ctx context.Context, query app.ListQuery) (app.ListRes
 	}, nil
 }
 
-func (r *Repository) GetByID(ctx context.Context, id string, includeInactive bool) (domain.Assistant, error) {
-	assistant, err := scanAssistant(r.db.QueryRow(ctx, getByIDQuery, id, includeInactive))
+func (r *Repository) GetByID(ctx context.Context, id string, includeInactive bool, userID string) (domain.Assistant, error) {
+	assistant, err := scanAssistant(r.db.QueryRow(ctx, getByIDQuery, id, includeInactive, nullableUserID(userID)))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return domain.Assistant{}, domain.ErrNotFound
@@ -127,6 +129,25 @@ func (r *Repository) Update(ctx context.Context, assistant domain.Assistant) (do
 	return updated, nil
 }
 
+func (r *Repository) AddFavorite(ctx context.Context, userID string, assistantID string, includeInactive bool) error {
+	var id string
+	err := r.db.QueryRow(ctx, addFavoriteQuery, userID, assistantID, includeInactive).Scan(&id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return domain.ErrNotFound
+		}
+
+		return err
+	}
+
+	return nil
+}
+
+func (r *Repository) RemoveFavorite(ctx context.Context, userID string, assistantID string) error {
+	_, err := r.db.Exec(ctx, removeFavoriteQuery, userID, assistantID)
+	return err
+}
+
 func scanAssistant(row rowScanner) (domain.Assistant, error) {
 	var (
 		id                string
@@ -138,6 +159,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		systemPrompt      string
 		exampleUserPrompt *string
 		tags              []string
+		isFavorite        bool
 		isActive          bool
 		createdAt         time.Time
 		updatedAt         time.Time
@@ -153,6 +175,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		&systemPrompt,
 		&exampleUserPrompt,
 		&tags,
+		&isFavorite,
 		&isActive,
 		&createdAt,
 		&updatedAt,
@@ -170,6 +193,7 @@ func scanAssistant(row rowScanner) (domain.Assistant, error) {
 		systemPrompt,
 		exampleUserPrompt,
 		tags,
+		isFavorite,
 		isActive,
 		&createdAt,
 		&updatedAt,
@@ -187,6 +211,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		systemPrompt      string
 		exampleUserPrompt *string
 		tags              []string
+		isFavorite        bool
 		isActive          bool
 		createdAt         time.Time
 		updatedAt         time.Time
@@ -203,6 +228,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		&systemPrompt,
 		&exampleUserPrompt,
 		&tags,
+		&isFavorite,
 		&isActive,
 		&createdAt,
 		&updatedAt,
@@ -221,6 +247,7 @@ func scanAssistantWithTotal(row rowScanner) (domain.Assistant, int, error) {
 		systemPrompt,
 		exampleUserPrompt,
 		tags,
+		isFavorite,
 		isActive,
 		&createdAt,
 		&updatedAt,
@@ -235,6 +262,14 @@ func nullableString(value *string) any {
 	}
 
 	return *value
+}
+
+func nullableUserID(value string) any {
+	if value == "" {
+		return nil
+	}
+
+	return value
 }
 
 func mapDatabaseError(err error) error {

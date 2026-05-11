@@ -21,6 +21,8 @@ type fakeRepository struct {
 	updateCalled  bool
 	getByIDCalled bool
 	listCalled    bool
+	addCalled     bool
+	removeCalled  bool
 }
 
 func (r *fakeRepository) List(_ context.Context, query app.ListQuery) (app.ListResult, error) {
@@ -34,7 +36,7 @@ func (r *fakeRepository) List(_ context.Context, query app.ListQuery) (app.ListR
 	}, nil
 }
 
-func (r *fakeRepository) GetByID(_ context.Context, _ string, _ bool) (domain.Assistant, error) {
+func (r *fakeRepository) GetByID(_ context.Context, _ string, _ bool, _ string) (domain.Assistant, error) {
 	r.getByIDCalled = true
 	return r.assistant, nil
 }
@@ -50,6 +52,16 @@ func (r *fakeRepository) Update(_ context.Context, assistant domain.Assistant) (
 	r.updateCalled = true
 	r.assistant = assistant
 	return r.assistant, nil
+}
+
+func (r *fakeRepository) AddFavorite(_ context.Context, _ string, _ string, _ bool) error {
+	r.addCalled = true
+	return nil
+}
+
+func (r *fakeRepository) RemoveFavorite(_ context.Context, _ string, _ string) error {
+	r.removeCalled = true
+	return nil
 }
 
 func TestCreateHandlerHandle(t *testing.T) {
@@ -168,6 +180,38 @@ func TestGetByIDHandlerInvalidID(t *testing.T) {
 	}
 }
 
+func TestAddFavoriteHandlerHandle(t *testing.T) {
+	repo := &fakeRepository{}
+	handler := NewAddFavoriteHandler(repo)
+
+	err := handler.Handle(context.Background(), app.FavoriteCommand{
+		UserID:      "44c75af3-eca3-4867-85fc-b8245eaafa3a",
+		AssistantID: testAssistantID,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !repo.addCalled {
+		t.Fatalf("expected repository call")
+	}
+}
+
+func TestRemoveFavoriteHandlerInvalidUserID(t *testing.T) {
+	repo := &fakeRepository{}
+	handler := NewRemoveFavoriteHandler(repo)
+
+	err := handler.Handle(context.Background(), app.FavoriteCommand{
+		UserID:      "bad",
+		AssistantID: testAssistantID,
+	})
+	if !errors.Is(err, domain.ErrInvalidID) {
+		t.Fatalf("expected ErrInvalidID, got %v", err)
+	}
+	if repo.removeCalled {
+		t.Fatalf("expected no repository call")
+	}
+}
+
 func validCreateCommand() app.CreateCommand {
 	categoryID := testCategoryID
 	name := "Assistant"
@@ -213,6 +257,7 @@ func validAssistant() domain.Assistant {
 		"System",
 		nil,
 		[]string{"support"},
+		false,
 		true,
 		nil,
 		nil,

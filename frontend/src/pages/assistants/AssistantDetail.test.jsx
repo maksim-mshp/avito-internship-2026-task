@@ -2,16 +2,20 @@ import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {MemoryRouter, Route, Routes} from 'react-router-dom'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {AuthContext} from '../../context/AuthContext.jsx'
-import {getAssistant, runAssistant} from '../../services/catalog.js'
+import {addFavoriteAssistant, getAssistant, removeFavoriteAssistant, runAssistant} from '../../services/catalog.js'
 import {AssistantDetail} from './AssistantDetail.jsx'
 
 vi.mock('../../services/catalog.js', () => ({
+    addFavoriteAssistant: vi.fn(),
     getAssistant: vi.fn(),
+    removeFavoriteAssistant: vi.fn(),
     runAssistant: vi.fn(),
 }))
 
 beforeEach(() => {
+    addFavoriteAssistant.mockReset()
     getAssistant.mockReset()
+    removeFavoriteAssistant.mockReset()
     runAssistant.mockReset()
 })
 
@@ -23,6 +27,7 @@ const assistant = {
     model: 'mock-smart',
     systemPrompt: 'секретный системный промпт',
     exampleUserPrompt: 'пример контекста',
+    isFavorite: false,
     isActive: true,
 }
 
@@ -69,5 +74,19 @@ describe('AssistantDetail', () => {
             expect(runAssistant).toHaveBeenCalledWith('assistant-id', 'новый контекст')
         })
         expect(await screen.findByText('готовый ответ')).toBeInTheDocument()
+    })
+
+    it('добавляет ассистента в избранное', async () => {
+        getAssistant.mockResolvedValueOnce({data: assistant})
+        addFavoriteAssistant.mockResolvedValueOnce({})
+
+        renderDetail()
+
+        fireEvent.click(await screen.findByRole('button', {name: 'В избранное'}))
+
+        await waitFor(() => {
+            expect(addFavoriteAssistant).toHaveBeenCalledWith('assistant-id')
+        })
+        expect(await screen.findByRole('button', {name: 'В избранном'})).toBeInTheDocument()
     })
 })

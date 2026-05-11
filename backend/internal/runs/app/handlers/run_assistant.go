@@ -43,7 +43,7 @@ func (h *RunAssistantHandler) Handle(ctx context.Context, cmd app.RunAssistantCo
 		return domain.Run{}, domain.ErrInvalidUserPrompt
 	}
 
-	assistant, err := h.assistants.GetByID(ctx, cmd.AssistantID, true)
+	assistant, err := h.assistants.GetByID(ctx, cmd.AssistantID, true, "")
 	if err != nil {
 		if errors.Is(err, assistantdomain.ErrNotFound) {
 			return domain.Run{}, domain.ErrAssistantNotFound

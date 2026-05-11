@@ -20,5 +20,5 @@ func (h *GetByIDHandler) Handle(ctx context.Context, query app.GetByIDQuery) (do
 		return domain.Assistant{}, domain.ErrInvalidID
 	}
 
-	return h.repo.GetByID(ctx, query.ID, query.IncludeInactive)
+	return h.repo.GetByID(ctx, query.ID, query.IncludeInactive, query.UserID)
 }

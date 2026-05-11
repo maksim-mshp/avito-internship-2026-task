@@ -20,6 +20,7 @@ func mapAssistant(assistant domain.Assistant) AssistantDTO {
 		SystemPrompt:      &systemPrompt,
 		ExampleUserPrompt: assistant.ExampleUserPrompt,
 		Tags:              tags,
+		IsFavorite:        assistant.IsFavorite,
 		IsActive:          assistant.IsActive,
 		CreatedAt:         assistant.CreatedAt,
 		UpdatedAt:         assistant.UpdatedAt,

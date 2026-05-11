@@ -22,7 +22,7 @@ type fakeAssistantRepository struct {
 	err       error
 }
 
-func (r fakeAssistantRepository) GetByID(_ context.Context, _ string, _ bool) (assistantdomain.Assistant, error) {
+func (r fakeAssistantRepository) GetByID(_ context.Context, _ string, _ bool, _ string) (assistantdomain.Assistant, error) {
 	if r.err != nil {
 		return assistantdomain.Assistant{}, r.err
 	}
@@ -210,6 +210,7 @@ func activeAssistant() assistantdomain.Assistant {
 		"system",
 		nil,
 		[]string{"support"},
+		false,
 		true,
 		nil,
 		nil,

@@ -25,6 +25,7 @@ func NewHTTPHandler(handlers *handlers.Handlers) *Handler {
 // @Param categoryId query string false "ID категории"
 // @Param q query string false "Поиск"
 // @Param tag query string false "Тег"
+// @Param favoritesOnly query bool false "Только избранные"
 // @Param includeInactive query bool false "Показывать неактивных"
 // @Param page query int false "Страница"
 // @Param pageSize query int false "Размер страницы"
@@ -68,6 +69,7 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	assistant, err := h.handlers.GetByID.Handle(r.Context(), app.GetByIDQuery{
 		ID:              r.PathValue("assistantId"),
+		UserID:          claims.UserID,
 		IncludeInactive: claims.Role == security.RoleAdmin,
 	})
 	if err != nil {
@@ -77,6 +79,66 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	corehttp.Respond(w, http.StatusOK, mapAssistant(assistant))
+}
+
+// @Summary Добавить ассистента в избранное
+// @Tags Assistants
+// @Security BearerAuth
+// @Param assistantId path string true "ID ассистента"
+// @Success 204 "Ассистент добавлен в избранное"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 404 {object} corehttp.ErrorResponse "Ассистент не найден"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants/{assistantId}/favorite [PUT]
+func (h *Handler) AddFavorite(w http.ResponseWriter, r *http.Request) {
+	claims, ok := security.ClaimsFromContext(r.Context())
+	if !ok {
+		corehttp.RespondError(w, corehttp.ErrUnauthorized)
+		return
+	}
+
+	err := h.handlers.AddFavorite.Handle(r.Context(), app.FavoriteCommand{
+		UserID:          claims.UserID,
+		AssistantID:     r.PathValue("assistantId"),
+		IncludeInactive: claims.Role == security.RoleAdmin,
+	})
+	if err != nil {
+		log.Printf("failed to add assistant favorite: %v", err)
+		corehttp.RespondError(w, mapError(err))
+		return
+	}
+
+	corehttp.Respond(w, http.StatusNoContent, nil)
+}
+
+// @Summary Удалить ассистента из избранного
+// @Tags Assistants
+// @Security BearerAuth
+// @Param assistantId path string true "ID ассистента"
+// @Success 204 "Ассистент удален из избранного"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /assistants/{assistantId}/favorite [DELETE]
+func (h *Handler) RemoveFavorite(w http.ResponseWriter, r *http.Request) {
+	claims, ok := security.ClaimsFromContext(r.Context())
+	if !ok {
+		corehttp.RespondError(w, corehttp.ErrUnauthorized)
+		return
+	}
+
+	err := h.handlers.RemoveFavorite.Handle(r.Context(), app.FavoriteCommand{
+		UserID:      claims.UserID,
+		AssistantID: r.PathValue("assistantId"),
+	})
+	if err != nil {
+		log.Printf("failed to remove assistant favorite: %v", err)
+		corehttp.RespondError(w, mapError(err))
+		return
+	}
+
+	corehttp.Respond(w, http.StatusNoContent, nil)
 }
 
 // @Summary Создать ассистента
@@ -174,6 +236,11 @@ func parseListQuery(r *http.Request) (app.ListQuery, *corehttp.APIError) {
 		return app.ListQuery{}, &corehttp.ErrInvalidRequest
 	}
 
+	favoritesOnly, err := parseBoolQuery(values.Get("favoritesOnly"), false)
+	if err != nil {
+		return app.ListQuery{}, &corehttp.ErrInvalidRequest
+	}
+
 	claims, ok := security.ClaimsFromContext(r.Context())
 	if !ok {
 		return app.ListQuery{}, &corehttp.ErrUnauthorized
@@ -187,6 +254,8 @@ func parseListQuery(r *http.Request) (app.ListQuery, *corehttp.APIError) {
 		CategoryID:      optionalQuery(values.Get("categoryId")),
 		Search:          optionalQuery(values.Get("q")),
 		Tag:             optionalQuery(values.Get("tag")),
+		UserID:          claims.UserID,
+		FavoritesOnly:   favoritesOnly,
 		IncludeInactive: includeInactive,
 		Page:            page,
 		PageSize:        pageSize,

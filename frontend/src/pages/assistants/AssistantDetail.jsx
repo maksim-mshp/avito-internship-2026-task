@@ -7,7 +7,7 @@ import {Message} from 'primereact/message'
 import {ProgressSpinner} from 'primereact/progressspinner'
 import {Tag} from 'primereact/tag'
 import {AuthContext} from '../../context/AuthContext.jsx'
-import {getAssistant, runAssistant} from '../../services/catalog.js'
+import {addFavoriteAssistant, getAssistant, removeFavoriteAssistant, runAssistant} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
 import '../../styles/Assistants.css'
 
@@ -23,6 +23,8 @@ const reducer = (state, action) => {
             return {...state, loading: true, error: null}
         case 'success':
             return {assistant: action.assistant, loading: false, error: null}
+        case 'favorite':
+            return {...state, assistant: {...state.assistant, isFavorite: action.isFavorite}}
         case 'error':
             return {...state, loading: false, error: action.error}
         default:
@@ -39,6 +41,7 @@ export const AssistantDetail = () => {
     const [run, setRun] = useState(null)
     const [runError, setRunError] = useState(null)
     const [submitting, setSubmitting] = useState(false)
+    const [favoriteLoading, setFavoriteLoading] = useState(false)
 
     useEffect(() => {
         let cancelled = false
@@ -85,6 +88,22 @@ export const AssistantDetail = () => {
         })
     }
 
+    const toggleFavorite = () => {
+        setFavoriteLoading(true)
+
+        const request = assistant.isFavorite
+            ? removeFavoriteAssistant(assistant.id)
+            : addFavoriteAssistant(assistant.id)
+
+        request.then(() => {
+            dispatch({type: 'favorite', isFavorite: !assistant.isFavorite})
+        }).catch((err) => {
+            setRunError(getTranslatedError(err))
+        }).finally(() => {
+            setFavoriteLoading(false)
+        })
+    }
+
     if (loading) {
         return (
             <div className="assistants-state">
@@ -114,6 +133,14 @@ export const AssistantDetail = () => {
                         onClick={() => navigate(`/admin/assistants/${assistant.id}/edit`)}
                     />
                 }
+                <Button
+                    outlined
+                    severity={assistant.isFavorite ? 'danger' : 'secondary'}
+                    icon={assistant.isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'}
+                    label={assistant.isFavorite ? 'В избранном' : 'В избранное'}
+                    loading={favoriteLoading}
+                    onClick={toggleFavorite}
+                />
             </div>
 
             <Card title={assistant.name} className="assistant-detail-card">

@@ -22,3 +22,9 @@ type UpdateCommand struct {
 	Tags              []string
 	IsActive          *bool
 }
+
+type FavoriteCommand struct {
+	UserID          string
+	AssistantID     string
+	IncludeInactive bool
+}

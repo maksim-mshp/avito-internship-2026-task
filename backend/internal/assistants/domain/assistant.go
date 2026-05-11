@@ -17,6 +17,7 @@ type Assistant struct {
 	SystemPrompt      string
 	ExampleUserPrompt *string
 	Tags              []string
+	IsFavorite        bool
 	IsActive          bool
 	CreatedAt         *time.Time
 	UpdatedAt         *time.Time
@@ -69,6 +70,7 @@ func NewAssistant(
 		SystemPrompt:      normalizedSystemPrompt,
 		ExampleUserPrompt: normalizeNullableString(exampleUserPrompt),
 		Tags:              normalizeTags(tags),
+		IsFavorite:        false,
 		IsActive:          active,
 	}, nil
 }
@@ -83,6 +85,7 @@ func ReconstituteAssistant(
 	systemPrompt string,
 	exampleUserPrompt *string,
 	tags []string,
+	isFavorite bool,
 	isActive bool,
 	createdAt *time.Time,
 	updatedAt *time.Time,
@@ -97,6 +100,7 @@ func ReconstituteAssistant(
 		SystemPrompt:      systemPrompt,
 		ExampleUserPrompt: exampleUserPrompt,
 		Tags:              normalizeTags(tags),
+		IsFavorite:        isFavorite,
 		IsActive:          isActive,
 		CreatedAt:         createdAt,
 		UpdatedAt:         updatedAt,

@@ -92,6 +92,13 @@
     gap: 6px;
 }
 
+.assistant-card-actions {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
 .assistants-state {
     align-items: center;
     color: var(--surface-600);

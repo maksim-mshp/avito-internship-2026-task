@@ -104,6 +104,9 @@
                     "isActive": {
                         "type": "boolean"
                     },
+                    "isFavorite": {
+                        "type": "boolean"
+                    },
                     "model": {
                         "type": "string"
                     },
@@ -507,6 +510,14 @@
                         }
                     },
                     {
+                        "description": "Только избранные",
+                        "in": "query",
+                        "name": "favoritesOnly",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
                         "description": "Показывать неактивных",
                         "in": "query",
                         "name": "includeInactive",
@@ -818,6 +829,132 @@
                     }
                 ],
                 "summary": "Обновить ассистента",
+                "tags": [
+                    "Assistants"
+                ]
+            }
+        },
+        "/assistants/{assistantId}/favorite": {
+            "delete": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "path",
+                        "name": "assistantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ассистент удален из избранного"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Удалить ассистента из избранного",
+                "tags": [
+                    "Assistants"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "description": "ID ассистента",
+                        "in": "path",
+                        "name": "assistantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ассистент добавлен в избранное"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Ассистент не найден"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Добавить ассистента в избранное",
                 "tags": [
                     "Assistants"
                 ]

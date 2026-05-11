@@ -8,7 +8,7 @@ import (
 )
 
 type AssistantRepository interface {
-	GetByID(ctx context.Context, id string, includeInactive bool) (assistantdomain.Assistant, error)
+	GetByID(ctx context.Context, id string, includeInactive bool, userID string) (assistantdomain.Assistant, error)
 }
 
 type RunRepository interface {

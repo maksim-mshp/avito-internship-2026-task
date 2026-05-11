@@ -40,6 +40,7 @@ type assistantDTO struct {
 	SystemPrompt      *string  `json:"systemPrompt"`
 	ExampleUserPrompt *string  `json:"exampleUserPrompt"`
 	Tags              []string `json:"tags"`
+	IsFavorite        bool     `json:"isFavorite"`
 	IsActive          bool     `json:"isActive"`
 }
 
@@ -99,6 +100,9 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 	if !hasTag(foundAssistant.Tags, "integration") {
 		t.Fatalf("expected assistant tags to contain integration, got=%v", foundAssistant.Tags)
 	}
+	if foundAssistant.IsFavorite {
+		t.Fatalf("expected assistant to be not favorite before favorite request")
+	}
 
 	tagResp := s.requestJSON(t, http.MethodGet, "/assistants?tag=integration&page=1&pageSize=10", nil, userToken)
 	assertStatus(t, tagResp, http.StatusOK)
@@ -106,6 +110,32 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 	tagBody := decodeJSON[assistantsResponse](t, tagResp.body)
 	if _, ok = findAssistant(tagBody.Assistants, assistant.ID); !ok {
 		t.Fatalf("created assistant %s was not found by tag", assistant.ID)
+	}
+
+	favoriteResp := s.requestJSON(t, http.MethodPut, fmt.Sprintf("/assistants/%s/favorite", assistant.ID), nil, userToken)
+	assertStatus(t, favoriteResp, http.StatusNoContent)
+
+	favoriteListResp := s.requestJSON(t, http.MethodGet, "/assistants?favoritesOnly=true&page=1&pageSize=10", nil, userToken)
+	assertStatus(t, favoriteListResp, http.StatusOK)
+
+	favoriteListBody := decodeJSON[assistantsResponse](t, favoriteListResp.body)
+	favoriteAssistant, ok := findAssistant(favoriteListBody.Assistants, assistant.ID)
+	if !ok {
+		t.Fatalf("created assistant %s was not found in favorites", assistant.ID)
+	}
+	if !favoriteAssistant.IsFavorite {
+		t.Fatalf("expected assistant to be favorite")
+	}
+
+	unfavoriteResp := s.requestJSON(t, http.MethodDelete, fmt.Sprintf("/assistants/%s/favorite", assistant.ID), nil, userToken)
+	assertStatus(t, unfavoriteResp, http.StatusNoContent)
+
+	emptyFavoriteListResp := s.requestJSON(t, http.MethodGet, "/assistants?favoritesOnly=true&page=1&pageSize=10", nil, userToken)
+	assertStatus(t, emptyFavoriteListResp, http.StatusOK)
+
+	emptyFavoriteListBody := decodeJSON[assistantsResponse](t, emptyFavoriteListResp.body)
+	if _, ok = findAssistant(emptyFavoriteListBody.Assistants, assistant.ID); ok {
+		t.Fatalf("assistant %s was found in favorites after delete", assistant.ID)
 	}
 
 	userPrompt := "проверь интеграционный запуск"
