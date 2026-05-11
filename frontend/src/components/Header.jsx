@@ -3,12 +3,14 @@ import {useLocation, useNavigate} from 'react-router-dom'
 import {Button} from 'primereact/button'
 import {Tag} from 'primereact/tag'
 import {AuthContext} from '../context/AuthContext.jsx'
+import {ThemeContext} from '../context/ThemeContext.jsx'
 import '../styles/Header.css'
 
 export const Header = () => {
     const location = useLocation()
     const navigate = useNavigate()
     const {logout, user} = useContext(AuthContext)
+    const {isDark, toggleTheme} = useContext(ThemeContext)
 
     const logoutHandler = () => {
         logout()
@@ -59,6 +61,14 @@ export const Header = () => {
                 }
             </div>
             <div className="flex align-items-center gap-2">
+                <Button
+                    className="theme-toggle"
+                    outlined
+                    rounded
+                    icon={isDark ? 'pi pi-sun' : 'pi pi-moon'}
+                    aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
+                    onClick={toggleTheme}
+                />
                 {user?.role && <Tag value={user.role}/>}
                 <Button className="p-button-danger" outlined icon="pi pi-sign-out" onClick={logoutHandler}/>
             </div>

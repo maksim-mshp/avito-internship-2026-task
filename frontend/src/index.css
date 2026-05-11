@@ -1,4 +1,6 @@
 body {
+    background: var(--surface-ground);
+    color: var(--text-color);
     margin: 0;
     min-width: 320px;
 }
@@ -31,4 +33,72 @@ main {
 
 .p-toast-message-content {
     align-items: center;
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --surface-a: #0f172a;
+    --surface-b: #111827;
+    --surface-c: #1f2937;
+    --surface-d: #334155;
+    --surface-e: #111827;
+    --surface-f: #0f172a;
+    --surface-0: #020617;
+    --surface-50: #0f172a;
+    --surface-100: #111827;
+    --surface-200: #1e293b;
+    --surface-300: #334155;
+    --surface-400: #475569;
+    --surface-500: #64748b;
+    --surface-600: #94a3b8;
+    --surface-700: #cbd5e1;
+    --surface-800: #e2e8f0;
+    --surface-900: #f8fafc;
+    --surface-ground: #020617;
+    --surface-section: #020617;
+    --surface-card: #0f172a;
+    --surface-overlay: #111827;
+    --surface-border: #334155;
+    --surface-hover: #1e293b;
+    --text-color: #e5e7eb;
+    --text-color-secondary: #cbd5e1;
+    --primary-color: #93c5fd;
+    --primary-50: #172554;
+    --primary-100: #1e3a8a;
+    --primary-200: #1d4ed8;
+    --primary-300: #2563eb;
+    --primary-400: #3b82f6;
+    --primary-500: #60a5fa;
+    --primary-600: #93c5fd;
+    --primary-700: #bfdbfe;
+    --primary-800: #dbeafe;
+    --primary-900: #eff6ff;
+}
+
+:root[data-theme='dark'] .p-card,
+:root[data-theme='dark'] .p-dialog,
+:root[data-theme='dark'] .p-dropdown-panel,
+:root[data-theme='dark'] .p-menu,
+:root[data-theme='dark'] .p-overlaypanel {
+    background: var(--surface-card);
+    color: var(--text-color);
+}
+
+:root[data-theme='dark'] .p-inputtext,
+:root[data-theme='dark'] .p-dropdown,
+:root[data-theme='dark'] .p-inputtextarea,
+:root[data-theme='dark'] .p-chips-multiple-container {
+    background: #020617;
+    border-color: var(--surface-border);
+    color: var(--text-color);
+}
+
+:root[data-theme='dark'] .p-inputtext::placeholder,
+:root[data-theme='dark'] .p-inputtextarea::placeholder {
+    color: var(--surface-500);
+}
+
+:root[data-theme='dark'] .p-button.p-button-secondary.p-button-text,
+:root[data-theme='dark'] .p-button.p-button-secondary.p-button-outlined {
+    color: var(--surface-800);
 }
