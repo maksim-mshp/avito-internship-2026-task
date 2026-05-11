@@ -14,11 +14,16 @@ type RunDTO struct {
 	Output        *string    `json:"output,omitempty"`
 	Status        string     `json:"status"`
 	Error         *string    `json:"error,omitempty"`
+	Rating        *string    `json:"rating,omitempty"`
 	CreatedAt     *time.Time `json:"createdAt,omitempty"`
 }
 
 type RunCreateRequest struct {
 	UserPrompt *string `json:"userPrompt"`
+}
+
+type RunRatingRequest struct {
+	Rating *string `json:"rating"`
 }
 
 type RunsResponse struct {

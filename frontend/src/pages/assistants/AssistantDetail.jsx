@@ -6,9 +6,11 @@ import {InputTextarea} from 'primereact/inputtextarea'
 import {Message} from 'primereact/message'
 import {ProgressSpinner} from 'primereact/progressspinner'
 import {Tag} from 'primereact/tag'
+import {RunRatingActions} from '../../components/RunRatingActions.jsx'
 import {AuthContext} from '../../context/AuthContext.jsx'
 import {addFavoriteAssistant, getAssistant, removeFavoriteAssistant, runAssistant} from '../../services/catalog.js'
 import {getTranslatedError} from '../../services/errors.js'
+import {setRunRating} from '../../services/runs.js'
 import '../../styles/Assistants.css'
 
 const initialState = {
@@ -42,6 +44,7 @@ export const AssistantDetail = () => {
     const [runError, setRunError] = useState(null)
     const [submitting, setSubmitting] = useState(false)
     const [favoriteLoading, setFavoriteLoading] = useState(false)
+    const [ratingLoading, setRatingLoading] = useState(null)
 
     useEffect(() => {
         let cancelled = false
@@ -101,6 +104,23 @@ export const AssistantDetail = () => {
             setRunError(getTranslatedError(err))
         }).finally(() => {
             setFavoriteLoading(false)
+        })
+    }
+
+    const rateRun = (rating) => {
+        if (!run?.id) {
+            return
+        }
+
+        setRatingLoading(rating)
+        setRunError(null)
+
+        setRunRating(run.id, rating).then(({data}) => {
+            setRun(data)
+        }).catch((err) => {
+            setRunError(getTranslatedError(err))
+        }).finally(() => {
+            setRatingLoading(null)
         })
     }
 
@@ -188,6 +208,7 @@ export const AssistantDetail = () => {
             {run?.output &&
                 <Card title="Ответ ассистента" className="assistant-detail-card">
                     <p className="assistant-output">{run.output}</p>
+                    <RunRatingActions rating={run.rating} loading={ratingLoading} onRate={rateRun}/>
                 </Card>
             }
         </section>

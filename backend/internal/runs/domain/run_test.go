@@ -60,3 +60,12 @@ func TestIsValidStatus(t *testing.T) {
 		t.Fatalf("expected unknown status to be invalid")
 	}
 }
+
+func TestIsValidRating(t *testing.T) {
+	if !IsValidRating(RatingLike) || !IsValidRating(RatingDislike) {
+		t.Fatalf("expected known ratings to be valid")
+	}
+	if IsValidRating("unknown") {
+		t.Fatalf("expected unknown rating to be invalid")
+	}
+}

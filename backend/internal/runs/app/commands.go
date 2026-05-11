@@ -5,3 +5,9 @@ type RunAssistantCommand struct {
 	UserID      string
 	UserPrompt  *string
 }
+
+type SetRatingCommand struct {
+	ID     string
+	UserID string
+	Rating *string
+}

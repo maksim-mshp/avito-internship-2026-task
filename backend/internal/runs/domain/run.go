@@ -19,6 +19,7 @@ type Run struct {
 	Output        *string
 	Status        string
 	Error         *string
+	Rating        *string
 	CreatedAt     *time.Time
 }
 
@@ -62,6 +63,7 @@ func ReconstituteRun(
 	output *string,
 	status string,
 	runError *string,
+	rating *string,
 	createdAt *time.Time,
 ) Run {
 	return Run{
@@ -76,6 +78,7 @@ func ReconstituteRun(
 		Output:        output,
 		Status:        status,
 		Error:         runError,
+		Rating:        normalizeRating(rating),
 		CreatedAt:     createdAt,
 	}
 }
@@ -83,4 +86,21 @@ func ReconstituteRun(
 func IsValidID(id string) bool {
 	_, err := uuid.Parse(id)
 	return err == nil
+}
+
+func IsValidRating(rating string) bool {
+	return rating == RatingLike || rating == RatingDislike
+}
+
+func normalizeRating(value *string) *string {
+	if value == nil {
+		return nil
+	}
+
+	rating := strings.TrimSpace(*value)
+	if rating == "" {
+		return nil
+	}
+
+	return &rating
 }

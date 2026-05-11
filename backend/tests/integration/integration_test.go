@@ -61,6 +61,7 @@ type runDTO struct {
 	Output        *string `json:"output"`
 	Status        string  `json:"status"`
 	Error         *string `json:"error"`
+	Rating        *string `json:"rating"`
 }
 
 type runsResponse struct {
@@ -161,6 +162,16 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 		t.Fatalf("unexpected run output: got=%v", runBody.Output)
 	}
 
+	ratingResp := s.requestJSON(t, http.MethodPut, fmt.Sprintf("/runs/%s/rating", runBody.ID), map[string]any{
+		"rating": "like",
+	}, userToken)
+	assertStatus(t, ratingResp, http.StatusOK)
+
+	ratedRun := decodeJSON[runDTO](t, ratingResp.body)
+	if ratedRun.Rating == nil || *ratedRun.Rating != "like" {
+		t.Fatalf("unexpected run rating: got=%v", ratedRun.Rating)
+	}
+
 	myRunsResp := s.requestJSON(t, http.MethodGet, "/runs/my?page=1&pageSize=10", nil, userToken)
 	assertStatus(t, myRunsResp, http.StatusOK)
 
@@ -171,6 +182,9 @@ func TestAdminCreatesCategoryAssistantAndUserRunsAssistant(t *testing.T) {
 	}
 	if myRun.AssistantName == nil || *myRun.AssistantName != assistant.Name {
 		t.Fatalf("unexpected run assistant name: got=%v want=%q", myRun.AssistantName, assistant.Name)
+	}
+	if myRun.Rating == nil || *myRun.Rating != "like" {
+		t.Fatalf("unexpected run rating in user history: got=%v", myRun.Rating)
 	}
 
 	adminRunsResp := s.requestJSON(t, http.MethodGet, fmt.Sprintf("/admin/runs?assistantId=%s&page=1&pageSize=10", assistant.ID), nil, adminToken)

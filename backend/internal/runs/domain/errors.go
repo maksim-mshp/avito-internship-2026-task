@@ -12,7 +12,11 @@ var ErrInvalidUserPrompt = errors.New("invalid user prompt")
 
 var ErrInvalidStatus = errors.New("invalid run status")
 
+var ErrInvalidRating = errors.New("invalid run rating")
+
 var ErrInvalidPagination = errors.New("invalid pagination")
+
+var ErrNotFound = errors.New("run not found")
 
 var ErrAssistantNotFound = errors.New("assistant not found")
 

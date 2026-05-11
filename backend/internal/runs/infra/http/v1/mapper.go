@@ -18,6 +18,7 @@ func mapRun(run domain.Run) RunDTO {
 		Output:        run.Output,
 		Status:        run.Status,
 		Error:         run.Error,
+		Rating:        run.Rating,
 		CreatedAt:     run.CreatedAt,
 	}
 }

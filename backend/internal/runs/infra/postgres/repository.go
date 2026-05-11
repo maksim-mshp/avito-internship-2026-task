@@ -2,11 +2,14 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"ai-assistants-catalog/internal/core/postgres"
 	"ai-assistants-catalog/internal/runs/app"
 	"ai-assistants-catalog/internal/runs/domain"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type Repository struct {
@@ -38,6 +41,19 @@ func (r *Repository) Complete(ctx context.Context, id string, output string) (do
 
 func (r *Repository) Fail(ctx context.Context, id string, message string) (domain.Run, error) {
 	return scanRun(r.db.QueryRow(ctx, failQuery, id, message))
+}
+
+func (r *Repository) SetRating(ctx context.Context, id string, userID string, rating string) (domain.Run, error) {
+	run, err := scanRun(r.db.QueryRow(ctx, setRatingQuery, id, userID, rating))
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return domain.Run{}, domain.ErrNotFound
+		}
+
+		return domain.Run{}, err
+	}
+
+	return run, nil
 }
 
 func (r *Repository) ListMy(ctx context.Context, query app.ListMyQuery) (app.ListResult, error) {
@@ -105,6 +121,7 @@ func scanRun(row rowScanner) (domain.Run, error) {
 		output        *string
 		status        string
 		runError      *string
+		rating        *string
 		createdAt     time.Time
 	)
 
@@ -120,6 +137,7 @@ func scanRun(row rowScanner) (domain.Run, error) {
 		&output,
 		&status,
 		&runError,
+		&rating,
 		&createdAt,
 	); err != nil {
 		return domain.Run{}, err
@@ -137,6 +155,7 @@ func scanRun(row rowScanner) (domain.Run, error) {
 		output,
 		status,
 		runError,
+		rating,
 		&createdAt,
 	), nil
 }
@@ -154,6 +173,7 @@ func scanRunWithTotal(row rowScanner) (domain.Run, int, error) {
 		output        *string
 		status        string
 		runError      *string
+		rating        *string
 		createdAt     time.Time
 		total         int
 	)
@@ -170,6 +190,7 @@ func scanRunWithTotal(row rowScanner) (domain.Run, int, error) {
 		&output,
 		&status,
 		&runError,
+		&rating,
 		&createdAt,
 		&total,
 	); err != nil {
@@ -188,6 +209,7 @@ func scanRunWithTotal(row rowScanner) (domain.Run, int, error) {
 		output,
 		status,
 		runError,
+		rating,
 		&createdAt,
 	)
 

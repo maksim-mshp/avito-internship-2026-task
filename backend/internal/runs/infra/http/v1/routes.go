@@ -9,6 +9,7 @@ func RegisterRoutes(
 	adminMW func(http.Handler) http.Handler,
 ) {
 	mux.Handle("POST /assistants/{assistantId}/run", authMW(http.HandlerFunc(h.RunAssistant)))
+	mux.Handle("PUT /runs/{runId}/rating", authMW(http.HandlerFunc(h.SetRating)))
 	mux.Handle("GET /runs/my", authMW(http.HandlerFunc(h.ListMy)))
 	mux.Handle("GET /admin/runs", authMW(adminMW(http.HandlerFunc(h.ListAdmin))))
 }

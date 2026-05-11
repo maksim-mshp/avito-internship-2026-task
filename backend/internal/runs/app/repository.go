@@ -15,6 +15,7 @@ type RunRepository interface {
 	CreatePending(ctx context.Context, run domain.Run) (domain.Run, error)
 	Complete(ctx context.Context, id string, output string) (domain.Run, error)
 	Fail(ctx context.Context, id string, message string) (domain.Run, error)
+	SetRating(ctx context.Context, id string, userID string, rating string) (domain.Run, error)
 	ListMy(ctx context.Context, query ListMyQuery) (ListResult, error)
 	ListAdmin(ctx context.Context, query ListAdminQuery) (ListResult, error)
 }

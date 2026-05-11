@@ -60,6 +60,45 @@ func (h *Handler) RunAssistant(w http.ResponseWriter, r *http.Request) {
 	corehttp.Respond(w, http.StatusCreated, mapRun(run))
 }
 
+// @Summary Оценить ответ ассистента
+// @Tags Runs
+// @Security BearerAuth
+// @Param runId path string true "ID запуска"
+// @Param request body RunRatingRequest true "RunRatingRequest"
+// @Success 200 {object} RunDTO "Оценка сохранена"
+// @Failure 400 {object} corehttp.ErrorResponse "Некорректный запрос"
+// @Failure 401 {object} corehttp.ErrorResponse "Нет авторизации"
+// @Failure 404 {object} corehttp.ErrorResponse "Запуск не найден"
+// @Failure 500 {object} corehttp.ErrorResponse "Внутренняя ошибка"
+// @Router /runs/{runId}/rating [PUT]
+func (h *Handler) SetRating(w http.ResponseWriter, r *http.Request) {
+	claims, ok := security.ClaimsFromContext(r.Context())
+	if !ok {
+		corehttp.RespondError(w, corehttp.ErrUnauthorized)
+		return
+	}
+
+	var request RunRatingRequest
+	apiErr := corehttp.ParseJSONBody(r, &request)
+	if apiErr != nil {
+		corehttp.RespondError(w, *apiErr)
+		return
+	}
+
+	run, err := h.handlers.SetRating.Handle(r.Context(), app.SetRatingCommand{
+		ID:     r.PathValue("runId"),
+		UserID: claims.UserID,
+		Rating: request.Rating,
+	})
+	if err != nil {
+		log.Printf("failed to set run rating: %v", err)
+		corehttp.RespondError(w, mapError(err))
+		return
+	}
+
+	corehttp.Respond(w, http.StatusOK, mapRun(run))
+}
+
 // @Summary История запусков пользователя
 // @Tags Runs
 // @Security BearerAuth

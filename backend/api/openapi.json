@@ -295,6 +295,9 @@
                     "output": {
                         "type": "string"
                     },
+                    "rating": {
+                        "type": "string"
+                    },
                     "status": {
                         "type": "string"
                     },
@@ -302,6 +305,14 @@
                         "type": "string"
                     },
                     "userPrompt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "v1.RunRatingRequest": {
+                "properties": {
+                    "rating": {
                         "type": "string"
                     }
                 },
@@ -1445,6 +1456,95 @@
                     }
                 ],
                 "summary": "История запусков пользователя",
+                "tags": [
+                    "Runs"
+                ]
+            }
+        },
+        "/runs/{runId}/rating": {
+            "put": {
+                "parameters": [
+                    {
+                        "description": "ID запуска",
+                        "in": "path",
+                        "name": "runId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.RunRatingRequest",
+                                "summary": "request",
+                                "description": "RunRatingRequest"
+                            }
+                        }
+                    },
+                    "description": "RunRatingRequest",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.RunDTO"
+                                }
+                            }
+                        },
+                        "description": "Оценка сохранена"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Некорректный запрос"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Нет авторизации"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Запуск не найден"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/http.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Внутренняя ошибка"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Оценить ответ ассистента",
                 "tags": [
                     "Runs"
                 ]

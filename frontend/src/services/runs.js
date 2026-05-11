@@ -7,3 +7,7 @@ export const getMyRuns = (params) => {
 export const getAdminRuns = (params) => {
     return api.get('/admin/runs', {params})
 }
+
+export const setRunRating = (runId, rating) => {
+    return api.put(`/runs/${runId}/rating`, {rating})
+}

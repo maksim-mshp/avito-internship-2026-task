@@ -37,6 +37,8 @@ type fakeRunRepository struct {
 	createCall   bool
 	completeCall bool
 	failCall     bool
+	ratingCall   bool
+	ratingValue  string
 }
 
 func (r *fakeRunRepository) CreatePending(_ context.Context, run domain.Run) (domain.Run, error) {
@@ -52,6 +54,7 @@ func (r *fakeRunRepository) CreatePending(_ context.Context, run domain.Run) (do
 		run.UserPrompt,
 		nil,
 		domain.StatusPending,
+		nil,
 		nil,
 		nil,
 	)
@@ -74,6 +77,7 @@ func (r *fakeRunRepository) Complete(_ context.Context, id string, output string
 		domain.StatusSuccess,
 		nil,
 		nil,
+		nil,
 	)
 
 	return r.completed, nil
@@ -94,6 +98,7 @@ func (r *fakeRunRepository) Fail(_ context.Context, id string, message string) (
 		domain.StatusFailed,
 		&message,
 		nil,
+		nil,
 	)
 
 	return r.failed, nil
@@ -105,6 +110,16 @@ func (r *fakeRunRepository) ListMy(_ context.Context, _ app.ListMyQuery) (app.Li
 
 func (r *fakeRunRepository) ListAdmin(_ context.Context, _ app.ListAdminQuery) (app.ListResult, error) {
 	return app.ListResult{}, nil
+}
+
+func (r *fakeRunRepository) SetRating(_ context.Context, id string, userID string, rating string) (domain.Run, error) {
+	r.ratingCall = true
+	r.ratingValue = rating
+	return domain.Run{
+		ID:     id,
+		UserID: userID,
+		Rating: &rating,
+	}, nil
 }
 
 type fakeProvider struct {

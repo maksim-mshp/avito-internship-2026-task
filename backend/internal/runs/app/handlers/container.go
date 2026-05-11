@@ -4,6 +4,7 @@ import "ai-assistants-catalog/internal/runs/app"
 
 type Handlers struct {
 	RunAssistant *RunAssistantHandler
+	SetRating    *SetRatingHandler
 	ListMy       *ListMyHandler
 	ListAdmin    *ListAdminHandler
 }
@@ -15,6 +16,7 @@ func BuildHandlers(
 ) *Handlers {
 	return &Handlers{
 		RunAssistant: NewRunAssistantHandler(runs, assistants, provider),
+		SetRating:    NewSetRatingHandler(runs),
 		ListMy:       NewListMyHandler(runs),
 		ListAdmin:    NewListAdminHandler(runs),
 	}

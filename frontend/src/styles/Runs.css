@@ -97,6 +97,19 @@
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.run-card-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.run-rating-actions {
+    display: flex;
+    gap: 6px;
+}
+
 .run-card-body-admin {
     grid-template-columns: minmax(220px, 0.8fr) repeat(2, minmax(260px, 1fr));
 }

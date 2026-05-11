@@ -9,6 +9,14 @@ import (
 )
 
 func mapError(err error) corehttp.APIError {
+	if errors.Is(err, domain.ErrNotFound) {
+		return corehttp.APIError{
+			StatusCode: http.StatusNotFound,
+			Code:       "RUN_NOT_FOUND",
+			Message:    "run not found",
+		}
+	}
+
 	if errors.Is(err, domain.ErrAssistantNotFound) {
 		return corehttp.APIError{
 			StatusCode: http.StatusNotFound,
@@ -38,6 +46,7 @@ func mapError(err error) corehttp.APIError {
 		errors.Is(err, domain.ErrInvalidUserID) ||
 		errors.Is(err, domain.ErrInvalidUserPrompt) ||
 		errors.Is(err, domain.ErrInvalidStatus) ||
+		errors.Is(err, domain.ErrInvalidRating) ||
 		errors.Is(err, domain.ErrInvalidPagination) {
 		return corehttp.ErrInvalidRequest
 	}
