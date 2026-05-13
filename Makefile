@@ -1,4 +1,4 @@
-.PHONY: install-deps test-backend test-integration test-frontend lint build openapi
+.PHONY: install-deps test-backend test-integration test-frontend lint build openapi coverage
 
 install-deps:
 	@cd backend && go install github.com/swaggo/swag/v2/cmd/swag@latest
@@ -29,3 +29,8 @@ openapi:
 	@cd backend && swag init -g internal/core/http/http.go --output api --outputTypes json,yaml --v3.1
 	@cd backend && mv -f api/swagger.json api/openapi.json
 	@cd backend && mv -f api/swagger.yaml api/openapi.yml
+
+coverage:
+	@cd backend && go test -v -short -coverprofile=coverage.out $$(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./... | grep .)
+	@cd backend && go tool cover -func=coverage.out
+	@cd frontend && npm run test:coverage
